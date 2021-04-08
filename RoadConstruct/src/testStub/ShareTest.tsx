@@ -1,13 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  Alert,
-  TouchableOpacity,
-} from 'react-native';
+import {SafeAreaView, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import Share from 'react-native-share';
 import ImgToBase64 from 'react-native-image-base64';
 
@@ -27,25 +19,6 @@ const ShareTest = () => {
     Share.open(options);
   };
 
-  // const nativeShare = async () => {
-  //   try {
-  //     const result = await Share.share({
-  //       message:
-  //         'React Native | A framework for building native apps using React',
-  //     });
-  //     if (result.action === Share.sharedAction) {
-  //       if (result.activityType) {
-  //         // shared with activity type of result.activityType
-  //       } else {
-  //         // shared
-  //       }
-  //     } else if (result.action === Share.dismissedAction) {
-  //       // dismissed
-  //     }
-  //   } catch (error) {
-  //     Alert.alert(error.message);
-  //   }
-  // };
   return (
     <SafeAreaView>
       <TouchableOpacity onPress={() => LibShare()}>

@@ -44,8 +44,6 @@ const BorderMap = () => {
     };
   });
 
-  console.log(res_data);
-  console.log('COORDINATES : ', res_data[0].coordinates);
   return (
     <SafeAreaView style={styles.container}>
       <NaverMapView
@@ -65,7 +63,6 @@ const BorderMap = () => {
         nightMode={false}>
         {res_data &&
           res_data?.map((it: any, idx: number) => {
-            console.log(it.kor_name);
             var kor_name: string = it.kor_name;
             var coordinates: Coord[] = it.coordinates;
             var dobule_coords: Coord[][] = it.double_coords;

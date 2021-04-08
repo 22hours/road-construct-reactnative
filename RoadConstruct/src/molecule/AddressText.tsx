@@ -18,35 +18,38 @@ import {toastAlert} from '~/util';
 
 // ICONS
 import Icon_Feather from 'react-native-vector-icons/Feather';
+import Typho from '~/Typho';
+import Color from '~/Color';
 
 type Props = {
-  address?: string;
+  label?: string;
+  value?: string;
 };
 
 const navermap_uri = (query?: string) =>
   `https://m.map.naver.com/search2/search.naver?query=${query}`;
 
-const AddressText = ({address}: Props) => {
+const AddressText = ({label, value}: Props) => {
   const touchable = useRef<any>();
   const [showPopover, setShowPopover] = useState(false);
 
   const dispatch = (type: string, param?: any) => {
     switch (type) {
       case 'MAP': {
-        Linking.openURL(navermap_uri(address));
+        Linking.openURL(navermap_uri(value));
         setShowPopover(false);
         break;
       }
       case 'SHARE': {
         const options = {
-          message: `${address}`,
+          message: `${value}`,
         };
         Share.open(options);
         setShowPopover(false);
         break;
       }
       case 'COPY': {
-        Clipboard.setString(`${address}`);
+        Clipboard.setString(`${value}`);
         toastAlert('복사되었습니다.');
         setShowPopover(false);
         break;
@@ -56,18 +59,23 @@ const AddressText = ({address}: Props) => {
 
   return (
     <>
-      <Text>아래 텍스트를 드래그 하십시오</Text>
-      <TouchableOpacity
-        ref={touchable}
-        onLongPress={() => setShowPopover(true)}
-        delayLongPress={300}>
-        <Text
-          style={[styles.text, showPopover ? styles.text_on : styles.text_off]}>
-          {address}
-        </Text>
-      </TouchableOpacity>
+      <Text>
+        <TouchableOpacity
+          ref={touchable}
+          onLongPress={() => setShowPopover(true)}
+          delayLongPress={300}>
+          <Typho type={'CAPTION'} text={label} />
+          <Typho
+            type={'ADDRESS'}
+            text={value}
+            extraStyle={[
+              styles.text,
+              showPopover ? styles.text_on : styles.text_off,
+            ]}
+          />
+        </TouchableOpacity>
+      </Text>
       <Popover
-        mode={'rn-modal'}
         from={touchable}
         isVisible={showPopover}
         onRequestClose={() => setShowPopover(false)}>
@@ -76,17 +84,29 @@ const AddressText = ({address}: Props) => {
             onPress={() => dispatch('MAP')}
             style={styles.popover_item}>
             <Icon_Feather name="map-pin" style={styles.popover_item__icon} />
-            <Text style={styles.popover_item__text}>지도</Text>
+            <Typho
+              type={'CAPTION'}
+              text={'지도'}
+              extraStyle={styles.popover_item__text}
+            />
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => dispatch('SHARE')}
             style={styles.popover_item}>
-            <Text style={styles.popover_item__text}>공유</Text>
+            <Typho
+              type={'CAPTION'}
+              text={'공유'}
+              extraStyle={styles.popover_item__text}
+            />
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => dispatch('COPY')}
             style={styles.popover_item}>
-            <Text style={styles.popover_item__text}>복사</Text>
+            <Typho
+              type={'CAPTION'}
+              text={'복사'}
+              extraStyle={styles.popover_item__text}
+            />
           </TouchableOpacity>
         </View>
       </Popover>
@@ -95,11 +115,9 @@ const AddressText = ({address}: Props) => {
 };
 
 const styles = StyleSheet.create({
-  text: {
-    fontSize: 20,
-  },
+  text: {},
   text_on: {
-    backgroundColor: 'red',
+    backgroundColor: Color.DRAG,
   },
   text_off: {},
 
@@ -117,7 +135,8 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   popover_item__text: {
-    fontSize: 15,
+    fontSize: 14,
+    color: 'black',
   },
 });
 
