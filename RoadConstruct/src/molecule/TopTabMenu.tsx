@@ -56,7 +56,9 @@ const TopTabMenu = React.memo(({state, setState}: Props) => {
             key={it}
             onPress={() => {
               if (it === '지도보기') {
-                navigation.navigate(GlobalEnum.Route.MAP_SCENE);
+                navigation.navigate(GlobalEnum.Route.MAP_SCENE, {
+                  type: 'ARTICLE_LIST',
+                });
               } else {
                 setState(it);
               }

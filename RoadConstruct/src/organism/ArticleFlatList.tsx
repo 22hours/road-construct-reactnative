@@ -61,9 +61,13 @@ const ArticleFlatList = React.memo(({state}: Props) => {
     <View>
       {['idle', 'pending'].indexOf(status) !== -1 && (
         <>
-          {[1, 2, 3, 4, 5].map(it => (
+          {[1, 2, 3, 4, 5].map((it, idx) => (
             <>
-              <ArticleListItem key={it} dispatch={dispatch} isSkeleton={true} />
+              <ArticleListItem
+                key={`SKELETON_ITEM_${idx}`}
+                dispatch={dispatch}
+                isSkeleton={true}
+              />
             </>
           ))}
         </>

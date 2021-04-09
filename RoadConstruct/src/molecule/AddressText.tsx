@@ -59,22 +59,20 @@ const AddressText = ({label, value}: Props) => {
 
   return (
     <>
-      <Text>
-        <TouchableOpacity
-          ref={touchable}
-          onLongPress={() => setShowPopover(true)}
-          delayLongPress={300}>
-          <Typho type={'CAPTION'} text={label} />
-          <Typho
-            type={'ADDRESS'}
-            text={value}
-            extraStyle={[
-              styles.text,
-              showPopover ? styles.text_on : styles.text_off,
-            ]}
-          />
-        </TouchableOpacity>
-      </Text>
+      <TouchableOpacity
+        ref={touchable}
+        onLongPress={() => setShowPopover(true)}
+        delayLongPress={300}>
+        <Typho type={'LABEL'} text={label} extraStyle={{color: 'black'}} />
+        <Typho
+          type={'ADDRESS'}
+          text={value}
+          extraStyle={[
+            styles.text,
+            showPopover ? styles.text_on : styles.text_off,
+          ]}
+        />
+      </TouchableOpacity>
       <Popover
         from={touchable}
         isVisible={showPopover}

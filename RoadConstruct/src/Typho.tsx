@@ -102,6 +102,7 @@ const TS = StyleSheet.create({
     fontFamily: 'AppleSDGothicNeoM',
     fontSize: 15,
     color: 'black',
+    flexShrink: 1,
   },
 });
 

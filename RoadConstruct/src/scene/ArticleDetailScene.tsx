@@ -101,7 +101,10 @@ const Article_Releated = React.memo(() => {
   const toggleIsCollapse = () => setIsCollapse(!isCollapse);
 
   const address_list = [
-    {label: '시점', value: '부일로 571번길 15'},
+    {
+      label: '시점',
+      value: '서울특별시 강서구 공항대로 65길 32 ~~롯데캐슬 102동 302호',
+    },
     {label: '중점', value: '봉담읍 동화리 와우리'},
     {label: '종점', value: '서울 마포구 홍대'},
     {label: '종점', value: '서울 마포구 홍대'},
@@ -124,7 +127,7 @@ const Article_Releated = React.memo(() => {
     return (
       <View style={ST.container}>
         <View style={ST.preview_container}>
-          <View>
+          <View style={{flex: 1}}>
             {address_list?.slice(0, 3)?.map((it, idx) => (
               <View key={`ADDRESSTEXT_${idx}`} style={{marginBottom: 20}}>
                 <AddressText {...it} />
@@ -161,7 +164,7 @@ const Article_Releated = React.memo(() => {
     return (
       <ArticleImage
         img={
-          'https://images.unsplash.com/photo-1617817546276-80b86dd60151?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'
+          'https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F0f83d5ba-2acd-48b3-a8dd-2d37ac7e7a81%2FKakaoTalk_20210407_172051674.jpg?table=block&id=16e1c2d2-e183-4f89-a1b6-26d092721665&width=3410&userId=8336b9b0-8e8c-481a-b0ee-42d661f8479f&cache=v2'
         }
       />
     );
