@@ -1,11 +1,12 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useState, useEffect, useContext, useRef} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
-  ScrollView,
+  TouchableOpacity,
   View,
   Text,
   StatusBar,
+  Linking,
 } from 'react-native';
 
 // STORE
@@ -21,16 +22,21 @@ import GlobalEnum from '~/GlobalEnum';
 import SceneLayout from '~/layout/SceneLayout';
 
 //TEST
-import {TouchableOpacity} from 'react-native-gesture-handler';
 import Color from '~/Color';
 import Typho from '~/Typho';
+
+// ORGANISM
+import ViewShotArea from '~/organism/ViewShotArea';
 
 // ATOMS
 import ArticleButton from '~/atom/ArticleButton';
 import AddressText from '~/molecule/AddressText';
 import ArticleImage from '~/atom/ArticleImage';
+import {toastAlert} from '~/util';
 
-type Props = {};
+type Props = {
+  navigation?: any;
+};
 
 ////////////////////////////////////////////////////
 //  COMMON
@@ -97,9 +103,6 @@ const Article_MainContent = React.memo(() => {
   );
 });
 const Article_Releated = React.memo(() => {
-  const [isCollapse, setIsCollapse] = useState<Boolean>(false);
-  const toggleIsCollapse = () => setIsCollapse(!isCollapse);
-
   const address_list = [
     {
       label: '시점',
@@ -112,6 +115,9 @@ const Article_Releated = React.memo(() => {
     {label: '종점', value: '서울 마포구 홍대2'},
   ];
   const AddressList = React.memo(() => {
+    const [isCollapse, setIsCollapse] = useState<Boolean>(false);
+    const toggleIsCollapse = () => setIsCollapse(!isCollapse);
+
     const ST = StyleSheet.create({
       container: {},
       preview_container: {
@@ -141,9 +147,17 @@ const Article_Releated = React.memo(() => {
               ))}
           </View>
           <View>
-            <ArticleButton text={'지도 보기'} icon={'지도 보기'} />
+            <ArticleButton
+              onPress={() => Linking.openURL('https://www.nav')}
+              text={'지도 보기'}
+              icon={'지도 보기'}
+            />
             <View style={{marginBottom: 20}} />
-            <ArticleButton text={'도면 보기'} icon={'도면 보기'} />
+            <ArticleButton
+              onPress={() => toastAlert('TODO')}
+              text={'도면 보기'}
+              icon={'도면 보기'}
+            />
           </View>
         </View>
         {address_list.length > 3 && (
@@ -161,6 +175,9 @@ const Article_Releated = React.memo(() => {
     );
   });
   const ImageList = React.memo(() => {
+    useEffect(() => {
+      console.log('RENDER IMAGE');
+    });
     return (
       <ArticleImage
         img={
@@ -244,6 +261,7 @@ const Article_Contact = React.memo(() => {
               icon={'전화 걸기'}
               isExpand={true}
               expandText={'전화 걸기'}
+              onPress={() => Linking.openURL(`tel:${it.value}`)}
             />
           </View>
         ))}
@@ -288,10 +306,14 @@ const ArticleDetailScene = (props: Props) => {
   return (
     <ArticleDetailProvider article_id={1}>
       <SceneLayout isScrollAble={true}>
-        <Article_MainContent />
-        <Article_Releated />
-        <Article_PastRelated />
-        <Article_Contact />
+        <ViewShotArea navigation={props.navigation}>
+          <>
+            <Article_MainContent />
+            <Article_Releated />
+            <Article_PastRelated />
+            <Article_Contact />
+          </>
+        </ViewShotArea>
       </SceneLayout>
     </ArticleDetailProvider>
   );

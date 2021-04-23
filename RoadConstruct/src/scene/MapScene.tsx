@@ -13,6 +13,7 @@ import {useNavigation} from '@react-navigation/native';
 
 /// ORGANIMS
 import ArticleMap from '~/organism/ArticleMap';
+import MapWebView from '~/organism/MapWebView';
 
 // LAYOUT
 import SceneLayout from '~/layout/SceneLayout';
@@ -80,7 +81,7 @@ const MapScene = ({route}: Props) => {
     }
   }, []);
 
-  return <>{mapProps && <ArticleMap {...mapProps} />}</>;
+  return <>{mapProps && <MapWebView {...mapProps} />}</>;
 };
 
 const styles = StyleSheet.create({});

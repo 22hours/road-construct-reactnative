@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -14,16 +14,25 @@ import {createStackNavigator} from '@react-navigation/stack';
 import SceneHeader from '~/layout/SceneHeader';
 
 // SCENE
+import MainScene from '~/scene/MainScene';
 import ArticleListScene from '~/scene/ArticleListScene';
 import ArticleDetailScene from '~/scene/ArticleDetailScene';
 import PdfDetailScene from '~/scene/PdfDetailScene';
 import MapScene from '~/scene/MapScene';
+import ImageWebViewScene from '~/scene/ImageWebViewScene';
 
 const Stack = createStackNavigator();
-const Router = () => {
+const RouterInner = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator headerMode={'screen'}>
+        <Stack.Screen
+          name="MAIN_SCENE"
+          component={MainScene}
+          options={{
+            header: props => <SceneHeader {...props} />,
+          }}
+        />
         <Stack.Screen
           name="ARTICLE_LIST"
           component={ArticleListScene}
@@ -52,9 +61,19 @@ const Router = () => {
             header: props => <SceneHeader {...props} />,
           }}
         />
+        <Stack.Screen
+          name="IMAGE_WEBVIEW_SCENE"
+          component={ImageWebViewScene}
+          options={{
+            header: props => <></>,
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
+};
+const Router = () => {
+  return <RouterInner />;
 };
 
 const styles = StyleSheet.create({});

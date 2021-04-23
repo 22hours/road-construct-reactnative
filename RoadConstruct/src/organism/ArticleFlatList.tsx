@@ -59,7 +59,7 @@ const ArticleFlatList = React.memo(({state}: Props) => {
   }, []);
   return (
     <View>
-      {['idle', 'pending'].indexOf(status) !== -1 && (
+      {/* {['idle', 'pending'].indexOf(status) !== -1 && (
         <>
           {[1, 2, 3, 4, 5].map((it, idx) => (
             <>
@@ -71,7 +71,7 @@ const ArticleFlatList = React.memo(({state}: Props) => {
             </>
           ))}
         </>
-      )}
+      )} */}
       {status === 'success' && (
         <ArticleListItem {...dummyItemProp} dispatch={dispatch} />
       )}

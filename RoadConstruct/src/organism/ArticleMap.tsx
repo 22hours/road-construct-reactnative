@@ -17,6 +17,7 @@ import NaverMapView, {
 import Geolocation from 'react-native-geolocation-service';
 import Typho from '~/Typho';
 import Color from '~/Color';
+import MapPannel from '~/molecule/MapPannel';
 
 // Basic = 0,
 // Navi = 1,
@@ -32,75 +33,8 @@ type Props = {
 };
 
 type Map = {
-  mapType: 0 | 1 | 2 | 3 | 4;
+  mapType: number;
 };
-const MapTypePanel = ({mapType, setMapType}) => {
-  const panel_list = [
-    {
-      label_text: '지도',
-      map_type: 0,
-      onPress: () => setMapType(0),
-    },
-    {
-      label_text: '위성',
-      map_type: 2,
-      onPress: () => setMapType(2),
-    },
-    {
-      label_text: '지적도',
-      map_type: 4,
-      onPress: () => setMapType(4),
-    },
-  ];
-  return (
-    <View style={PST.container}>
-      {panel_list.map((it, idx) => {
-        return (
-          <TouchableOpacity
-            style={[
-              PST.panel_button,
-              it.map_type === mapType && PST.panel_button_on,
-            ]}
-            onPress={() => it.onPress()}
-            key={`MAPTYPEPANEL_${idx}`}>
-            <Typho
-              type={'LABEL'}
-              text={it.label_text}
-              extraStyle={[
-                PST.panel_button__text,
-                it.map_type === mapType && PST.panel_button__text_on,
-              ]}
-            />
-          </TouchableOpacity>
-        );
-      })}
-    </View>
-  );
-};
-const PST = StyleSheet.create({
-  container: {
-    position: 'absolute',
-    backgroundColor: 'white',
-    elevation: 11,
-    top: 10,
-    left: 20,
-    zIndex: 1,
-    borderRadius: 5,
-    overflow: 'hidden',
-  },
-  panel_button: {
-    padding: 10,
-  },
-  panel_button_on: {
-    backgroundColor: Color.PRIMARY,
-  },
-  panel_button__text: {
-    color: 'black',
-  },
-  panel_button__text_on: {
-    color: 'white',
-  },
-});
 
 const ArticleMaker = ({coordinate}) => {
   return (
@@ -131,7 +65,7 @@ const ArticleMap = (props: Props) => {
     {coordinate: {latitude: 37.565383, longitude: 126.976292}},
   ];
 
-  const [mapType, setMapType] = useState<Map['mapType']>();
+  const [mapType, setMapType] = useState<Map['mapType']>(0);
   const [zoomLevel, setZoomLevel] = useState<number>(12);
   const mapRef = useRef();
 
@@ -147,7 +81,7 @@ const ArticleMap = (props: Props) => {
     <SafeAreaView style={ST.container}>
       {props && (
         <>
-          <MapTypePanel mapType={mapType} setMapType={setMapType} />
+          <MapPannel mapType={mapType} setMapType={setMapType} />
           <NaverMapView
             style={{flex: 1}}
             ref={mapRef}

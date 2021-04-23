@@ -12,12 +12,13 @@ export const useAsync = <T, E = string>(
   const [error, setError] = useState<E | null>(null);
 
   const execute = useCallback(() => {
+    console.log('EXECUTE');
     setStatus('pending');
     setValue(null);
     setError(null);
     return asyncFunction()
       .then((response: any) => {
-        setValue(response);
+        setValue(response?.data);
         setStatus('success');
       })
       .catch((error: any) => {
