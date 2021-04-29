@@ -12,7 +12,7 @@ export const useAsync = <T, E = string>(
   const [error, setError] = useState<E | null>(null);
 
   const execute = useCallback(() => {
-    console.log('EXECUTE');
+    console.log('EXECUTED!');
     setStatus('pending');
     setValue(null);
     setError(null);

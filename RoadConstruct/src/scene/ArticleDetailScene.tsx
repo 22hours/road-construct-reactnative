@@ -1,4 +1,10 @@
-import React, {useState, useEffect, useContext, useRef} from 'react';
+import React, {
+  useState,
+  useEffect,
+  useContext,
+  useRef,
+  useCallback,
+} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -12,11 +18,12 @@ import {
 // STORE
 import {
   ArticleDetailProvider,
-  ArticleDetailContext,
+  useArticleDetailStoreState,
 } from '~/store/ArticleDetailStore';
 
 // ENUM
 import GlobalEnum from '~/GlobalEnum';
+import {api_types} from '@global_types';
 
 // LAYOUT
 import SceneLayout from '~/layout/SceneLayout';
@@ -33,10 +40,12 @@ import ArticleButton from '~/atom/ArticleButton';
 import AddressText from '~/molecule/AddressText';
 import ArticleImage from '~/atom/ArticleImage';
 import {toastAlert} from '~/util';
+import {useNavigation} from '@react-navigation/native';
 
-type Props = {
-  navigation?: any;
-};
+// ICONS
+import Icon_AntDesign from 'react-native-vector-icons/AntDesign';
+
+type DATA_Type = api_types.api_response__article_detail;
 
 ////////////////////////////////////////////////////
 //  COMMON
@@ -74,158 +83,232 @@ const ArticleSection = ({
 ////////////////////////////////////////////////////
 //  SCENE COMPONENT
 ////////////////////////////////////////////////////
-const Article_MainContent = React.memo(() => {
-  const {dispatch} = useContext(ArticleDetailContext);
+const SECITON__TOPIC_CONTENT = React.memo(() => {
+  const navigation = useNavigation();
+  const state: DATA_Type['topic_content'] = useArticleDetailStoreState(
+    'TOPIC_CONTENT',
+  );
+
+  const handlePressPDF = useCallback(() => {
+    var origin_pdf_file_url = state.article_file_list[0].url;
+    navigation.navigate(GlobalEnum.Route.PDF_SCENE, {
+      pdf_uri: origin_pdf_file_url,
+    });
+  }, []);
   return (
     <ArticleSection
       section_title={'주요 내용'}
-      section_bodies={[
-        <View key={1}>
-          <Typho
-            type={'H5'}
-            text={
-              '와부읍 팔당리 649-3번지 일원에 도로 (소로2-266호선) 결정(안)에 대한 주민 의견 청취  '
-            }
-          />
-        </View>,
-        <View key={2}>
-          <ArticleButton
-            text={'원문 보기'}
-            icon={'원문 보기'}
-            onPress={() => {
-              console.log('HAHAHAH');
-              dispatch({type: 'PDF'});
-            }}
-          />
-        </View>,
-      ]}
+      section_bodies={
+        state && [
+          <View key={1} style={{flexDirection: 'row'}}>
+            <Typho
+              type={'H5'}
+              text={state.content}
+              extraStyle={{color: 'black'}}
+            />
+            {state.article_file_list?.length >= 1 && (
+              <ArticleButton
+                text={'원문 보기'}
+                icon={'원문 보기'}
+                onPress={handlePressPDF}
+              />
+            )}
+          </View>,
+        ]
+      }
     />
   );
 });
-const Article_Releated = React.memo(() => {
-  const address_list = [
-    {
-      label: '시점',
-      value: '서울특별시 강서구 공항대로 65길 32 ~~롯데캐슬 102동 302호',
-    },
-    {label: '중점', value: '봉담읍 동화리 와우리'},
-    {label: '종점', value: '서울 마포구 홍대'},
-    {label: '종점', value: '서울 마포구 홍대'},
-    {label: '종점', value: '서울 마포구 홍대1'},
-    {label: '종점', value: '서울 마포구 홍대2'},
-  ];
-  const AddressList = React.memo(() => {
-    const [isCollapse, setIsCollapse] = useState<Boolean>(false);
-    const toggleIsCollapse = () => setIsCollapse(!isCollapse);
+const SECITON__RELATED_ADDRESS = React.memo(() => {
+  const state = useArticleDetailStoreState('RELATED_ADDRESS');
 
-    const ST = StyleSheet.create({
-      container: {},
-      preview_container: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-      },
-      viewmore_button: {
-        backgroundColor: Color.BUTTONBACK,
-        paddingHorizontal: 10,
-        paddingVertical: 5,
-      },
-    });
-    return (
-      <View style={ST.container}>
-        <View style={ST.preview_container}>
-          <View style={{flex: 1}}>
-            {address_list?.slice(0, 3)?.map((it, idx) => (
-              <View key={`ADDRESSTEXT_${idx}`} style={{marginBottom: 20}}>
-                <AddressText {...it} />
-              </View>
-            ))}
-            {isCollapse &&
-              address_list?.slice(4)?.map((it, idx) => (
+  const AddressList = React.memo(
+    ({
+      address_list,
+    }: {
+      address_list: DATA_Type['related_address']['address_list'];
+    }) => {
+      const [isCollapse, setIsCollapse] = useState<Boolean>(false);
+      const toggleIsCollapse = () => setIsCollapse(!isCollapse);
+
+      const ST = StyleSheet.create({
+        container: {},
+        preview_container: {
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+        },
+        viewmore_button: {
+          backgroundColor: Color.BUTTONBACK,
+          paddingHorizontal: 10,
+          paddingVertical: 5,
+        },
+      });
+      return (
+        <View style={ST.container}>
+          <View style={ST.preview_container}>
+            <View style={{flex: 1}}>
+              {address_list?.slice(0, 2)?.map((it, idx) => (
                 <View key={`ADDRESSTEXT_${idx}`} style={{marginBottom: 20}}>
                   <AddressText {...it} />
                 </View>
               ))}
+              {isCollapse &&
+                address_list?.slice(2)?.map((it, idx) => (
+                  <View key={`ADDRESSTEXT_${idx}`} style={{marginBottom: 20}}>
+                    <AddressText {...it} />
+                  </View>
+                ))}
+            </View>
+            <View>
+              <ArticleButton
+                onPress={() => Linking.openURL('https://www.nav')}
+                text={'지도 보기'}
+                icon={'지도 보기'}
+              />
+              <View style={{marginBottom: 20}} />
+              <ArticleButton
+                onPress={() => toastAlert('TODO')}
+                text={'도면 보기'}
+                icon={'도면 보기'}
+              />
+            </View>
           </View>
-          <View>
-            <ArticleButton
-              onPress={() => Linking.openURL('https://www.nav')}
-              text={'지도 보기'}
-              icon={'지도 보기'}
-            />
-            <View style={{marginBottom: 20}} />
-            <ArticleButton
-              onPress={() => toastAlert('TODO')}
-              text={'도면 보기'}
-              icon={'도면 보기'}
-            />
-          </View>
+          {address_list.length > 2 && (
+            <TouchableOpacity
+              onPress={() => toggleIsCollapse()}
+              style={ST.viewmore_button}>
+              <Typho
+                type={'CAPTION'}
+                text={isCollapse ? '닫기' : '더 보기'}
+                extraStyle={{textAlign: 'center'}}
+              />
+            </TouchableOpacity>
+          )}
         </View>
-        {address_list.length > 3 && (
-          <TouchableOpacity
-            onPress={() => toggleIsCollapse()}
-            style={ST.viewmore_button}>
-            <Typho
-              type={'CAPTION'}
-              text={isCollapse ? '닫기' : '더 보기'}
-              extraStyle={{textAlign: 'center'}}
-            />
-          </TouchableOpacity>
-        )}
+      );
+    },
+  );
+  const RenderImageItem = React.memo(({it}: {it: any}) => {
+    useEffect(() => {
+      console.log('IMAGE');
+    });
+    return (
+      <View>
+        <Typho type={'LABEL'} text={it.title} />
+        <ArticleImage img={it.url} />
       </View>
     );
   });
-  const ImageList = React.memo(() => {
-    useEffect(() => {
-      console.log('RENDER IMAGE');
-    });
-    return (
-      <ArticleImage
-        img={
-          'https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F0f83d5ba-2acd-48b3-a8dd-2d37ac7e7a81%2FKakaoTalk_20210407_172051674.jpg?table=block&id=16e1c2d2-e183-4f89-a1b6-26d092721665&width=3410&userId=8336b9b0-8e8c-481a-b0ee-42d661f8479f&cache=v2'
-        }
-      />
-    );
-  });
+  const ImageList = React.memo(
+    ({
+      article_image_list,
+    }: {
+      article_image_list: DATA_Type['related_address']['article_image_list'];
+    }) => {
+      const [isCollapse, setIsCollapse] = useState<Boolean>(false);
+      const toggleIsCollapse = () => setIsCollapse(!isCollapse);
+      useEffect(() => {
+        console.log('RENDER IMAGE');
+      });
+
+      return (
+        <>
+          {article_image_list?.slice(0, 1)?.map((it, idx) => (
+            <RenderImageItem
+              key={`ARTICLE_RELATED_ADDRESS_IMAGE::${idx}`}
+              it={it}
+            />
+          ))}
+          {isCollapse && (
+            <>
+              {article_image_list?.slice(1)?.map((it, idx) => (
+                <RenderImageItem
+                  key={`ARTICLE_RELATED_ADDRESS_IMAGE::${idx}`}
+                  it={it}
+                />
+              ))}
+            </>
+          )}
+          {article_image_list?.length > 1 && (
+            <TouchableOpacity
+              onPress={() => toggleIsCollapse()}
+              style={ST.viewmore_button}>
+              <Typho
+                type={'CAPTION'}
+                text={isCollapse ? '닫기' : '더 보기'}
+                extraStyle={{textAlign: 'center'}}
+              />
+            </TouchableOpacity>
+          )}
+        </>
+      );
+    },
+  );
   return (
     <ArticleSection
       section_title={'관련 지번'}
-      section_bodies={[
-        <View key={1}>
-          <AddressList />
-        </View>,
-        <View key={2}>
-          <ImageList />
-        </View>,
-      ]}
+      section_bodies={
+        state && [
+          <View key={1}>
+            <AddressList address_list={state.address_list} />
+          </View>,
+          <View key={2}>
+            <ImageList article_image_list={state.article_image_list} />
+          </View>,
+        ]
+      }
     />
   );
 });
-const Article_PastRelated = React.memo(() => {
-  const Item = ({label, value}) => {
-    return (
-      <View>
-        <Typho type={'LABEL'} text={label} />
-        <Typho type={'H5'} text={value} />
-      </View>
-    );
-  };
+const SECTION__ARTICLE_STEP = React.memo(() => {
+  const state: DATA_Type['article_step'] = useArticleDetailStoreState(
+    'ARTICLE_STEP',
+  );
   return (
     <ArticleSection
-      section_title={'과거 관련 공시'}
-      section_bodies={[
-        <Item label={'고시일'} value={'2020.03.03'} />,
-        <Item
-          label={'고시 제목'}
-          value={'도시관리 계획(도로:소로2-266) 결정(안) 입안 결정'}
-        />,
-        <Item
-          label={'내용 보기'}
-          value={'도시관리 계획(도로:소로2-266) 결정(안) 입안 결정'}
-        />,
-      ]}></ArticleSection>
+      section_title={'진행 단계'}
+      section_bodies={
+        state && [
+          <View key={`SECTION__STEP_1`}>
+            {state.step_list.map((it, idx) => {
+              return (
+                <View key={`ITEM__STEP_${idx}`} style={{marginBottom: 5}}>
+                  <View style={{flexDirection: 'row'}}>
+                    <Typho
+                      type={'H5'}
+                      text={it}
+                      extraStyle={[
+                        idx == state.current_step_idx
+                          ? {
+                              color: '#C00003',
+                              backgroundColor: '#E7E6E6',
+                              paddingHorizontal: 10,
+                              paddingVertical: 5,
+                              borderRadius: 3,
+                            }
+                          : {color: 'black'},
+                        {marginBottom: 5},
+                      ]}
+                    />
+                  </View>
+
+                  {idx !== state.step_list.length - 1 && (
+                    <Icon_AntDesign name="down" style={{paddingLeft: 10}} />
+                  )}
+                </View>
+              );
+            })}
+          </View>,
+        ]
+      }
+    />
   );
 });
-const Article_Contact = React.memo(() => {
+const SECITON__RELREATED_CONTACT = React.memo(() => {
+  const state: DATA_Type['related_contact'] = useArticleDetailStoreState(
+    'RELATED_CONTACT',
+  );
+
   const ST = StyleSheet.create({
     button_container: {
       flexDirection: 'row',
@@ -247,21 +330,22 @@ const Article_Contact = React.memo(() => {
     contact,
   }: {
     source: string;
-    contact: Array<{label: string; value: string}>;
+    contact: Array<{name: string; phone_num: string}>;
   }) => {
+    console.log(contact);
     return (
       <View>
         <Typho type={'LABEL'} text={source} />
         <View style={{marginBottom: 10}} />
-        {contact.map((it, idx) => (
+        {contact?.map((it, idx) => (
           <View key={idx} style={{marginBottom: 20}}>
             <ArticleButton
               key={`CALL_${idx}`}
-              text={it.label}
+              text={it.name}
               icon={'전화 걸기'}
               isExpand={true}
               expandText={'전화 걸기'}
-              onPress={() => Linking.openURL(`tel:${it.value}`)}
+              onPress={() => Linking.openURL(`tel:${it.phone_num}`)}
             />
           </View>
         ))}
@@ -281,13 +365,14 @@ const Article_Contact = React.memo(() => {
       section_title={'관련 문의'}
       section_bodies={[
         <View>
-          <Item
-            source={'남양주 시청'}
-            contact={[
-              {label: '도시정책과 (031-590-8321)', value: '031-590-8321'},
-              {label: '도시정책과 (031-590-832221)', value: '031-590-8321'},
-            ]}
-          />
+          {state &&
+            state.map((it, idx) => (
+              <Item
+                key={`CONTACT::${idx}`}
+                source={it.agency}
+                contact={it.ministry_list}
+              />
+            ))}
         </View>,
         <View style={ST.button_container}>
           <Button text={'공유'} onPress={() => {}} />
@@ -301,17 +386,24 @@ const Article_Contact = React.memo(() => {
 ////////////////////////////////////////////////////
 //  SCENE
 ////////////////////////////////////////////////////
-
+type Props = {
+  route?: any;
+  navigation?: any;
+};
 const ArticleDetailScene = (props: Props) => {
+  const article_id = props.route?.params?.article_id;
   return (
-    <ArticleDetailProvider article_id={1}>
+    <ArticleDetailProvider article_id={article_id}>
       <SceneLayout isScrollAble={true}>
         <ViewShotArea navigation={props.navigation}>
           <>
-            <Article_MainContent />
-            <Article_Releated />
+            <SECITON__TOPIC_CONTENT />
+            <SECITON__RELATED_ADDRESS />
+            <SECTION__ARTICLE_STEP />
+            <SECITON__RELREATED_CONTACT />
+            {/* <Article_Releated />
             <Article_PastRelated />
-            <Article_Contact />
+            <Article_Contact /> */}
           </>
         </ViewShotArea>
       </SceneLayout>
@@ -321,21 +413,21 @@ const ArticleDetailScene = (props: Props) => {
 
 const ST = StyleSheet.create({
   section_wrapper: {
-    backgroundColor: 'white',
-    elevation: 11,
-    padding: 10,
+    // backgroundColor: 'white',
     borderRadius: 5,
     marginBottom: 20,
+    paddingBottom: 20,
+    borderBottomWidth: 1,
+    borderColor: Color.COMMON.BORDER,
   },
   section_header_wrapper: {
     flexDirection: 'row',
   },
   section_header: {
-    backgroundColor: Color.PRIMARY,
+    backgroundColor: Color.COMMON.PRIMARY,
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 5,
-    elevation: 11,
     marginBottom: 20,
   },
   section_header__text: {
@@ -343,6 +435,11 @@ const ST = StyleSheet.create({
   },
   section_body_item: {
     marginBottom: 20,
+  },
+  viewmore_button: {
+    backgroundColor: Color.BUTTONBACK,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
   },
 });
 

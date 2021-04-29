@@ -10,9 +10,10 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
-    "@react-native-async-storage/async-storage": "^1.14.1",
+    "@react-native-async-storage/async-storage": "^1.15.4",
     "@react-native-clipboard/clipboard": "^1.7.0",
     "@react-native-community/masked-view": "^0.1.10",
+    "@react-native-community/picker": "^1.8.1",
     "@react-native-community/progress-bar-android": "^1.0.4",
     "@react-native-community/progress-view": "^1.2.4",
     "@react-navigation/native": "^5.9.3",
@@ -31,6 +32,7 @@
     "react-native-modal": "^11.7.0",
     "react-native-nmap": "^0.0.59",
     "react-native-pdf": "^6.3.0",
+    "react-native-picker-select": "^8.0.4",
     "react-native-popover-view": "^3.1.1",
     "react-native-reanimated": "^2.1.0",
     "react-native-safe-area-context": "^3.2.0",

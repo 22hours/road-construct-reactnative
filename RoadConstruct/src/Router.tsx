@@ -20,6 +20,7 @@ import ArticleDetailScene from '~/scene/ArticleDetailScene';
 import PdfDetailScene from '~/scene/PdfDetailScene';
 import MapScene from '~/scene/MapScene';
 import ImageWebViewScene from '~/scene/ImageWebViewScene';
+import GlobalLoader from './organism/GlobalLoader';
 
 const Stack = createStackNavigator();
 const RouterInner = () => {
@@ -73,7 +74,11 @@ const RouterInner = () => {
   );
 };
 const Router = () => {
-  return <RouterInner />;
+  return (
+    <>
+      <RouterInner />
+    </>
+  );
 };
 
 const styles = StyleSheet.create({});

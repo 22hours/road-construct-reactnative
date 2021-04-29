@@ -1,104 +1,246 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useState, useEffect, useCallback, useReducer} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
   ScrollView,
   View,
   Text,
-  StatusBar,
+  FlatList,
 } from 'react-native';
-import axios from 'axios';
-import {useNavigation} from '@react-navigation/native';
-import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 
-// HOOKS
-import {useAsync} from '~/Hooks';
+import {api_types, meta_types} from '@global_types';
+import {API_CALL} from '~/api';
 
-// ENUM
-import GlobalEnum from '~/GlobalEnum';
+// STORE
+import {useArticleListStoreState} from '~/store/ArticleListStore';
 
 // MOLEUCULES
 import ArticleListItem from '~/molecule/ArticleListItem';
+import MediaListItem from '~/molecule/MediaListItem';
+
+// ATOMS
 import Typho from '~/Typho';
+import {useLoader} from '~/store/AppGlobalLoadingStore';
 
-type Select = '지자체' | '정부' | '언론' | '내 관심' | '지도보기';
-type Props = {
-  state: Select;
+const REQUIRED_COUNT = 10;
+
+type State = {
+  nowTab: meta_types.list_scene__tab_type;
+  page: number;
+  data: Array<api_types.article_list_item | api_types.media_list_item>;
+  isEnd: Boolean;
+  isInited: Boolean;
 };
 
-const getTabCountData = async (state): Promise<string> => {
-  const rest_data = await axios.get('https://api.androidhive.info/contacts/');
-  return rest_data?.data;
+type Action =
+  | {type: 'APPEND_DATA'; data: State['data']; isEnd?: Boolean}
+  | {type: 'INCREASE_PAGE'}
+  | {type: 'SET_ISEND'; data: State['isEnd']}
+  | {type: 'SET_PAGE'; data: State['page']}
+  | {type: 'INIT_STATE'; data: meta_types.list_scene__tab_type}
+  | {type: 'ERROR_OCCURED'};
+
+const renderArticleItem = ({item}) => {
+  return <ArticleListItem {...item} />;
 };
 
-const ArticleFlatList = React.memo(({state}: Props) => {
-  const {execute, status, value, error} = useAsync<string>(
-    useCallback(() => getTabCountData(state), [state]),
-    [state],
-    true,
-  );
-  const dummyItemProp = {
-    step: '의견 청취',
-    title: '경기도 남양주시 (2021.02.26)',
-    content:
-      '도시관리계획(도로:소로2-266) 결정(안) 입안 및 주민공람-공고 계획보고',
-  };
-  const navigation = useNavigation();
-  const dispatch = useCallback((type: string, param?: any) => {
-    switch (type) {
-      case 'VIEWMORE': {
-        break;
+const renderMediaItem = ({item}) => {
+  return <MediaListItem {...item} />;
+};
+
+const MemoizedArticleFlatList = React.memo(
+  ({data, fetchMore}: {data: State['data']; fetchMore: () => void}) => {
+    return (
+      <FlatList
+        style={{marginHorizontal: 0}}
+        keyExtractor={(item, index) => `ARTICLE_${index}`}
+        data={data}
+        renderItem={renderArticleItem}
+        onEndReached={fetchMore}
+        onEndReachedThreshold={0.5}
+      />
+    );
+  },
+);
+const MemoizedMediaFlatList = React.memo(
+  ({data, fetchMore}: {data: State['data']; fetchMore: () => void}) => {
+    return (
+      <FlatList
+        style={{marginHorizontal: 0}}
+        keyExtractor={(item, index) => `MEDIA_${index}`}
+        data={data}
+        renderItem={renderMediaItem}
+        onEndReached={fetchMore}
+        onEndReachedThreshold={0.5}
+      />
+    );
+  },
+);
+
+const ArticleFlatListController = React.memo(
+  ({
+    pageState,
+  }: {
+    pageState: {
+      nowTab: meta_types.list_scene__tab_type;
+      filter: {
+        si: string;
+        gu: string;
+      };
+    };
+  }) => {
+    const dispatchLoader = useLoader();
+    const reducer = (state: State, action: Action): State => {
+      switch (action.type) {
+        case 'APPEND_DATA': {
+          return {
+            ...state,
+            data: state.data.concat(action.data),
+            page: state.page + 1,
+            isEnd: action.isEnd ? true : false,
+            isInited: false,
+          };
+        }
+        case 'INCREASE_PAGE': {
+          return {
+            ...state,
+            page: state.page + 1,
+          };
+        }
+        case 'SET_PAGE': {
+          return {
+            ...state,
+            page: action.data,
+          };
+        }
+        case 'SET_ISEND': {
+          return {
+            ...state,
+            isEnd: action.data,
+          };
+        }
+        case 'INIT_STATE': {
+          return {
+            nowTab: action.data,
+            page: 1,
+            data: [],
+            isEnd: false,
+            isInited: true,
+          };
+        }
+        case 'ERROR_OCCURED': {
+          return {
+            ...state,
+            page: 1,
+            data: [],
+            isEnd: true,
+            isInited: false,
+          };
+        }
+        default:
+          throw new Error('FLAT LIST ERROR');
       }
-      case 'OPENDETAIL': {
-        navigation.navigate(GlobalEnum.Route.ARTICLE_DETAIL, {id: param.id});
-        break;
+    };
+    const [state, dispatch] = useReducer(reducer, {
+      nowTab: '지자체',
+      page: 1,
+      data: [],
+      isEnd: false,
+      isInited: true,
+    });
+
+    useEffect(() => {
+      if (state.isInited) {
+        fetchMore();
       }
-      default:
-        return;
-    }
-  }, []);
-  return (
-    <View>
-      {/* {['idle', 'pending'].indexOf(status) !== -1 && (
-        <>
-          {[1, 2, 3, 4, 5].map((it, idx) => (
-            <>
-              <ArticleListItem
-                key={`SKELETON_ITEM_${idx}`}
-                dispatch={dispatch}
-                isSkeleton={true}
-              />
-            </>
-          ))}
-        </>
-      )} */}
-      {status === 'success' && (
-        <ArticleListItem {...dummyItemProp} dispatch={dispatch} />
-      )}
-      {status === 'error' && (
-        <>
-          <Typho
-            type={'CAPTION'}
-            text={'에러가 발생하였습니다'}
-            extraStyle={{textAlign: 'center', marginTop: 10, fontSize: 15}}
-          />
-          <Typho
-            type={'CAPTION'}
-            text={'다시 시도해 주세요'}
-            extraStyle={{textAlign: 'center', marginTop: 10, fontSize: 20}}
-          />
-        </>
-      )}
+    }, [state.isInited]);
+
+    useEffect(() => {
+      dispatch({type: 'INIT_STATE', data: pageState.nowTab});
+    }, [pageState]);
+
+    type endPoint = 'ARTICLE LIST' | 'MEDIA LIST' | 'STARRED LIST';
+    const getEndPoint = (): endPoint => {
+      switch (pageState.nowTab) {
+        case '지자체':
+          return 'ARTICLE LIST';
+        case '언론':
+          return 'MEDIA LIST';
+        case '내 관심':
+          return 'STARRED LIST';
+        default:
+          throw new Error('REDUCE END POINT ERROR :: ARTICLE FLAT LIST ');
+      }
+    };
+    const fetchMore = async () => {
+      if (state.isEnd) return;
+      if (state.page === 1) {
+        dispatchLoader({type: 'SHOW_LOADER'});
+      }
+      const res_data = await API_CALL(
+        'get',
+        'MAIN_HOST',
+        getEndPoint(),
+        undefined,
+        {
+          page: state.page,
+          required_count: REQUIRED_COUNT,
+        },
+      );
+      if (state.page === 1) {
+        dispatchLoader({type: 'HIDE_LOADER'});
+      }
+
+      if (res_data) {
+        if (res_data.result === 'SUCCESS') {
+          var res_data_length = res_data.data.length;
+          var isEndFlag = false;
+          if (REQUIRED_COUNT > res_data_length) {
+            isEndFlag = true;
+          }
+          dispatch({
+            type: 'APPEND_DATA',
+            data: res_data.data,
+            isEnd: isEndFlag,
+          });
+        } else {
+          dispatch({type: 'ERROR_OCCURED'});
+        }
+      }
+    };
+
+    return (
       <View>
-        <Typho
-          type={'CAPTION'}
-          text={'더 이상 소식이 없습니다'}
-          extraStyle={{textAlign: 'center', marginTop: 10}}
-        />
+        {state.data.length >= 1 && (
+          <>
+            {state.nowTab === '지자체' ? (
+              <MemoizedArticleFlatList
+                data={state.data}
+                fetchMore={fetchMore}
+              />
+            ) : (
+              <MemoizedMediaFlatList data={state.data} fetchMore={fetchMore} />
+            )}
+          </>
+        )}
+
+        <View>
+          <Typho
+            type={'CAPTION'}
+            text={'더 이상 소식이 없습니다'}
+            extraStyle={{textAlign: 'center', marginTop: 10}}
+          />
+        </View>
       </View>
-    </View>
-  );
-});
+    );
+  },
+);
+
+const ArticleFlatList = () => {
+  const pageState = useArticleListStoreState('FLATLIST');
+
+  return <ArticleFlatListController pageState={pageState} />;
+};
 
 const styles = StyleSheet.create({});
 

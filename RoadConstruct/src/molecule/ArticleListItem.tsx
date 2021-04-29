@@ -1,74 +1,41 @@
 import React, {useState, useEffect, useCallback} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-  TouchableOpacity,
-  Alert,
-} from 'react-native';
+import {StyleSheet, View, TouchableOpacity} from 'react-native';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 
 import Typho from '~/Typho';
 import Color from '~/Color';
+import {api_types} from '@global_types';
+import {useNavigation} from '@react-navigation/native';
+import GlobalEnum from '~/GlobalEnum';
 
-type ItemProps = {
-  id?: string;
-  step?: string;
-  title?: string;
-  content?: string;
-  dispatch: (type: string, param?: any) => void;
-  isSkeleton?: Boolean;
-};
+type ItemProps = api_types.article_list_item;
 
-const SekeltonItem = React.memo(() => {
-  return (
-    <SkeletonPlaceholder>
-      <View style={[ST.container, {elevation: 0}]}></View>
-    </SkeletonPlaceholder>
-  );
-});
+// const SekeltonItem = React.memo(() => {
+//   return (
+//     <SkeletonPlaceholder>
+//       <View style={[ST.container, {elevation: 0}]}></View>
+//     </SkeletonPlaceholder>
+//   );
+// });
 const ArticleListItem = React.memo((props: ItemProps) => {
-  if (props.isSkeleton) {
-    return <SekeltonItem />;
-  }
+  const navigation = useNavigation();
   return (
     <View style={ST.container}>
-      <View>
-        <TouchableOpacity onPress={() => props.dispatch('VIEWMORE')}>
-          <Text style={ST.steppannel_top}>
-            <Typho
-              type={'LABEL'}
-              text={'진행 상황'}
-              extraStyle={{color: 'white'}}
-            />
-          </Text>
-          <Text style={ST.steppannel_bottom}>
-            <Typho
-              type={'LABEL'}
-              text={props.step}
-              extraStyle={{color: 'white'}}
-            />
-          </Text>
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate(GlobalEnum.Route.ARTICLE_DETAIL, {
+            article_id: props.article_id,
+          })
+        }>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <Typho type={'H4'} text={props.title} />
           <Typho
             type={'LABEL'}
-            text={'더 보기'}
-            extraStyle={{
-              marginTop: 5,
-              color: 'gray',
-              textAlign: 'center',
-              fontSize: 12,
-            }}
+            text={props.date?.toString()}
+            extraStyle={ST.dateBox}
           />
-        </TouchableOpacity>
-      </View>
-      <TouchableOpacity
-        onPress={() => props.dispatch('OPENDETAIL', {id: props.id})}
-        style={ST.container_right}>
-        <Typho type={'H4'} text={props.title} />
-        <Typho type={'H5'} text={props.content} extraStyle={{marginTop: 10}} />
+        </View>
+        <Typho type={'H5'} text={props.summary} extraStyle={{marginTop: 10}} />
       </TouchableOpacity>
     </View>
   );
@@ -77,13 +44,11 @@ const ArticleListItem = React.memo((props: ItemProps) => {
 const ST = StyleSheet.create({
   container: {
     backgroundColor: 'white',
-    elevation: 10,
-    minHeight: 100,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 5,
+    paddingVertical: 15,
     flexDirection: 'row',
-    marginBottom: 15,
+
+    borderBottomColor: Color.LIST_SCENE.BORDER,
+    borderBottomWidth: 1,
   },
   steppannel_top: {
     paddingHorizontal: 10,
@@ -98,9 +63,12 @@ const ST = StyleSheet.create({
     backgroundColor: Color.THIRD,
     borderRadius: 1,
   },
-  container_right: {
-    marginLeft: 15,
-    flex: 1,
+  dateBox: {
+    color: 'white',
+    backgroundColor: Color.COMMON.PRIMARY,
+    paddingHorizontal: 5,
+    marginLeft: 10,
+    borderRadius: 5,
   },
 });
 

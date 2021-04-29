@@ -23,32 +23,6 @@ type Props = {
   onPress: () => void;
 };
 
-const RenderIcon = ({icon}) => {
-  switch (icon) {
-    case '원문 보기':
-      return (
-        <Icon_Ionicons
-          name="document-attach-outline"
-          style={ST.section_button_icon}
-        />
-      );
-    case '지도 보기':
-      return (
-        <Icon_MaterialCommunityIcons
-          name="map-marker-radius"
-          style={ST.section_button_icon}
-        />
-      );
-    case '도면 보기':
-      return <Icon_FontAwesome name="search" style={ST.section_button_icon} />;
-    case '전화 걸기':
-      return <Icon_Ionicons name="call" style={ST.section_button_icon} />;
-
-    default:
-      return <></>;
-  }
-};
-
 const RenderIconBody = ({text, icon, isExpand, expandText, onPress}: Props) => {
   return (
     <TouchableOpacity onPress={() => onPress()} style={ST.section_button}>
@@ -65,10 +39,6 @@ const RenderIconBody = ({text, icon, isExpand, expandText, onPress}: Props) => {
             extraStyle={ST.section_button__text}
           />
         )}
-      </View>
-
-      <View style={ST.section_button__right}>
-        <RenderIcon icon={icon} />
       </View>
     </TouchableOpacity>
   );
@@ -91,7 +61,7 @@ const ST = StyleSheet.create({
   // SECTION BUTTON STYLE
   section_button: {
     flexDirection: 'row',
-    backgroundColor: Color.BUTTONBACK,
+    backgroundColor: Color.DETAIL_SCENE.FILTER_BACK,
     justifyContent: 'space-between',
     overflow: 'hidden',
     borderRadius: 5,
@@ -104,7 +74,7 @@ const ST = StyleSheet.create({
     justifyContent: 'space-between',
   },
   section_button__text: {
-    color: Color.SECONDARY,
+    color: 'black',
   },
   section_button__right: {
     backgroundColor: Color.SECONDARY,

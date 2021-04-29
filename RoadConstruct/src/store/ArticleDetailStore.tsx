@@ -1,64 +1,126 @@
-import React, {useState, useEffect} from 'react';
-import {useNavigation} from '@react-navigation/native';
+import React, {
+  useState,
+  useEffect,
+  Dispatch,
+  createContext,
+  useReducer,
+  useContext,
+} from 'react';
+import {api_types} from '@global_types';
+import {API_CALL} from '~/api';
 
-// HOOKS
-import {useAsync} from '~/Hooks';
-import axios from 'axios';
-import GlobalEnum from '~/GlobalEnum';
+// ELEMENT TYPES
 
-const getData = async (): Promise<string> => {
-  const rest_data = await axios.get('https://api.androidhive.info/contacts/');
-  return rest_data?.data;
+// STATE TYPES
+type State = api_types.api_response__article_detail;
+
+// ACTION TYPES
+type Action = {type: 'SET_STATE'; data: any};
+
+// DISPATCH TYPES
+type ContextDispatch = Dispatch<Action>;
+
+// CONTEXT
+const ArticleDetailContext = React.createContext<State | null>(null);
+const ArticleDetailDispatchContext = createContext<ContextDispatch | null>(
+  null,
+);
+
+// REDUCER
+const reducer = (state: State, action: Action): State => {
+  switch (action.type) {
+    case 'SET_STATE':
+      return action.data;
+    default:
+      throw new Error('ARTICLE DETAIL STORE ERROR OCCURED IN :: REDUCER');
+  }
 };
 
-const ArticleDetailContext = React.createContext(null);
-const ArticleDetailProvider = ({article_id, children}) => {
-  const {execute, status, value, error} = useAsync<string>(getData, [], false);
-  const navigation = useNavigation();
+export const ArticleDetailProvider = ({
+  article_id,
+  children,
+}: {
+  article_id: number;
+  children: JSX.Element;
+}) => {
+  const [state, dispatch] = useReducer(reducer, {
+    topic_content: {
+      content: 'content',
+      article_file_list: [],
+    },
+    related_address: {
+      address_list: [],
+      article_image_list: [],
+    },
+    article_step: {
+      current_step_idx: 1,
+      step_list: [],
+    },
+    related_contact: [],
+    starred: false,
+  });
 
-  type Action =
-    | {type: 'PDF'}
-    | {type: 'MAP'}
-    | {type: 'TOZI'}
-    | {type: 'CALL'; phone_number: string}
-    | {type: 'SHARE'}
-    | {type: 'STAR'}
-    | {type: 'NEWS'};
-
-  var test_pdf =
-    'https://s3.us-west-2.amazonaws.com/secure.notion-static.com/9ced86c3-a697-4531-96c0-895e0523c687/.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAT73L2G45O3KS52Y5%2F20210408%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20210408T073223Z&X-Amz-Expires=86400&X-Amz-Signature=46cb394e99c8fc9e4d3c0d6fe3e222b8cabd2c03fc8bbd2daebcd0ed8a619303&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22%25EB%258F%2584%25EC%258B%259C%25EA%25B4%2580%25EB%25A6%25AC%25EA%25B3%2584%25ED%259A%258D%25EA%25B2%25B0%25EC%25A0%2595%25EB%258F%2584.pdf%22';
-
-  const dispatch = (action: Action) => {
-    switch (action.type) {
-      case 'PDF': {
-        console.log('HA');
-        navigation.navigate(GlobalEnum.Route.PDF_SCENE, {
-          pdf_uri: test_pdf,
-        });
-      }
-      case 'MAP': {
-      }
-      case 'TOZI': {
-      }
-      case 'CALL': {
-      }
-      case 'SHARE': {
-      }
-      case 'STAR': {
-      }
-      case 'NEWS': {
+  const getDetailData = async () => {
+    console.log({article_id});
+    const rest_data = await API_CALL(
+      'get',
+      'MAIN_HOST',
+      'ARTICLE DETAIL',
+      article_id,
+    );
+    if (rest_data) {
+      if (rest_data?.result === 'SUCCESS') {
+        dispatch({type: 'SET_STATE', data: rest_data.data});
+      } else {
+        console.error('API ERROR OCCURED');
       }
     }
   };
 
-  const store = {
-    dispatch,
-  };
+  useEffect(() => {
+    getDetailData();
+  }, []);
+
+  useEffect(() => {
+    console.log(state);
+  }, [state]);
+
   return (
-    <ArticleDetailContext.Provider value={store}>
-      {children}
+    <ArticleDetailContext.Provider value={state}>
+      <ArticleDetailDispatchContext.Provider value={dispatch}>
+        {children}
+      </ArticleDetailDispatchContext.Provider>
     </ArticleDetailContext.Provider>
   );
 };
-export {ArticleDetailProvider, ArticleDetailContext};
-1;
+
+type Type =
+  | 'TOPIC_CONTENT'
+  | 'RELATED_ADDRESS'
+  | 'ARTICLE_STEP'
+  | 'RELATED_CONTACT'
+  | 'STARRED';
+export const useArticleDetailStoreState = (type: Type): any => {
+  const state = useContext(ArticleDetailContext);
+  if (!state) throw new Error('Cannot find ArticleDetailProvider');
+  switch (type) {
+    case 'TOPIC_CONTENT':
+      return {...state.topic_content};
+    case 'RELATED_ADDRESS':
+      return state.related_address;
+    case 'ARTICLE_STEP':
+      return state.article_step;
+    case 'RELATED_CONTACT':
+      return state.related_contact;
+    case 'STARRED':
+      return state.starred;
+    default:
+      throw new Error('ARTICLE DETAIL STORE ERROR IN :: USE STORE STATE');
+  }
+};
+
+export const useStoreDispatch = () => {
+  const dispatch = useContext(ArticleDetailDispatchContext);
+  if (!dispatch) throw new Error('Cannot find ArticleDetailProvider');
+  return dispatch;
+};

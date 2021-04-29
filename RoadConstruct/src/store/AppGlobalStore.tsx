@@ -1,36 +1,71 @@
-import React, {useState, useEffect} from 'react';
+import React, {
+  useState,
+  useEffect,
+  Dispatch,
+  useReducer,
+  useContext,
+} from 'react';
 
 import {useAsync} from '~/Hooks';
 import axios from 'axios';
+import {API_CALL} from '~/api';
 
-const AppGlobalContext = React.createContext(null);
-const AppGlobalProvider = ({children}) => {
+// ELEMENT TYPES
+
+// STATE TYPES
+type ContextState = {
+  origin_data: Array<any>;
+  si_list: Array<any>;
+};
+
+// ACTIONS TYPES
+type Action =
+  | {type: 'FETCH_LOCATION'}
+  | {type: 'SET_LOCATION'; data: Array<any>};
+
+// DISPATCH TYPES
+type ContextDispatch = Dispatch<Action>;
+
+// CONTEXT
+const AppGlobalContext = React.createContext<ContextState | null>(null);
+
+// REDUCER
+const reducer = (state: ContextState, action: Action): ContextState => {
+  switch (action.type) {
+    case 'SET_LOCATION':
+      return {
+        origin_data: action.data,
+        si_list: action.data.map(it => it.si),
+      };
+    default:
+      throw new Error('Unhandled action');
+  }
+};
+
+export const AppGlobalProvider = ({children}: {children: React.ReactNode}) => {
   const getLocationInitData = () => {
-    return axios.get('http://10.0.2.2:5000/locations');
+    return API_CALL('get', 'MAIN_HOST', 'LOCATION_LIST');
   };
-  const {value} = useAsync(getLocationInitData, []);
-
-  const [state, setState] = useState({
+  const {value, execute} = useAsync(getLocationInitData, []);
+  const [locationData, dispatch] = useReducer(reducer, {
     origin_data: [],
     si_list: [],
   });
 
   useEffect(() => {
     if (value) {
-      setState({
-        origin_data: value,
-        si_list: value.map(it => it.si),
-      });
+      dispatch({type: 'SET_LOCATION', data: value});
     }
   }, [value]);
-  const store = {state};
   return (
-    <AppGlobalContext.Provider value={store}>
-      {state && children}
+    <AppGlobalContext.Provider value={locationData}>
+      {locationData && children}
     </AppGlobalContext.Provider>
   );
 };
-export {AppGlobalProvider, AppGlobalContext};
 
-// TODO : 2021.04.23
-// LOCATION OBJECT INIT & SET IN APP
+export const useLocationData = () => {
+  const state = useContext(AppGlobalContext);
+  if (!state) throw new Error('Cannot find SampleProvider');
+  return state;
+};
