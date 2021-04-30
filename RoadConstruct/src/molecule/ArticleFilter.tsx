@@ -69,7 +69,11 @@ const ArticleFilter = () => {
     var matchIdx = locationState.origin_data.findIndex(it => it.si === nowSi);
     if (matchIdx === -1) throw new Error('GU LIST ERROR :: IN ARTICLE FILTER');
     else {
-      return locationState.origin_data[matchIdx].gus;
+      var origin_gu_list: Array<string> = locationState.origin_data[
+        matchIdx
+      ]?.gu_list?.slice();
+      origin_gu_list.push('전체');
+      return origin_gu_list;
     }
   };
 

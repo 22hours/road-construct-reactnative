@@ -77,7 +77,11 @@ declare module '@global_types' {
         }[];
       };
       related_address: {
-        address_list: Array<{label: string; value: string}>;
+        address_list: Array<{
+          label: string;
+          value: string;
+          address_type: 'ROAD' | 'PARCEL';
+        }>;
         article_image_list: Array<{title: string; url: string}>;
       };
       article_step: {
@@ -89,6 +93,7 @@ declare module '@global_types' {
         ministry_list: Array<{name: string; phone_num: string}>;
       }>;
       starred: boolean;
+      article_id: number;
     };
 
     /* 

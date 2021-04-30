@@ -1,21 +1,5 @@
-import React, {
-  useState,
-  useEffect,
-  useCallback,
-  useReducer,
-  useMemo,
-} from 'react';
-import {
-  SafeAreaView,
-  View,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  TextInput,
-} from 'react-native';
-
-// GLOBAL CONFIGS
-import {meta_types} from '@global_types';
+import React from 'react';
+import {View} from 'react-native';
 
 // LAYOUT
 import SceneLayout from '~/layout/SceneLayout';
@@ -26,11 +10,9 @@ import ArticleFilter from '~/molecule/ArticleFilter';
 
 // ORGANISM
 import ArticleFlatList from '~/organism/ArticleFlatList';
-import {
-  ArticleListProvider,
-  useArticleListStoreDispatch,
-  useArticleListStoreState,
-} from '~/store/ArticleListStore';
+
+// STORE
+import {ArticleListProvider} from '~/store/ArticleListStore';
 
 const ListSection = ({children}) => {
   return <View style={{marginBottom: 15}}>{children}</View>;
@@ -38,8 +20,7 @@ const ListSection = ({children}) => {
 
 const ArticleListScene = ({route}: {route?: any}) => {
   const initSi = route?.params?.initSi;
-  console.log(initSi);
-  console.log(initSi || '서울시');
+
   return (
     <ArticleListProvider initSi={initSi}>
       <SceneLayout>

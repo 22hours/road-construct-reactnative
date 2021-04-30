@@ -10,16 +10,16 @@ const MemoizedRouter = React.memo(() => <Router />);
 
 const App = () => {
   return (
-    <AppGlobalProvider>
-      <AppGlobalLoadingProvider>
+    <AppGlobalLoadingProvider>
+      <AppGlobalProvider>
         <SafeAreaView style={{flex: 1}}>
           <View style={{flex: 1}}>
             <MemoizedRouter />
             <GlobalLoader />
           </View>
         </SafeAreaView>
-      </AppGlobalLoadingProvider>
-    </AppGlobalProvider>
+      </AppGlobalProvider>
+    </AppGlobalLoadingProvider>
   );
 };
 

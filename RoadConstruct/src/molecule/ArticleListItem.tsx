@@ -45,7 +45,6 @@ const ST = StyleSheet.create({
   container: {
     backgroundColor: 'white',
     paddingVertical: 15,
-    flexDirection: 'row',
 
     borderBottomColor: Color.LIST_SCENE.BORDER,
     borderBottomWidth: 1,

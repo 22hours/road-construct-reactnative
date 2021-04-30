@@ -14,6 +14,11 @@ type Props = {};
 
 const MapWebView = (props: Props) => {
   const [mapType, setMapType] = useState<number>(0);
+  const [
+    isCadastralLayerVisible,
+    setIsCadastralLayerVisible,
+  ] = useState<boolean>(false);
+
   const webViewRef = useRef<WebView | null>(null);
 
   const handleMapType = (mapType: number) => {
@@ -29,6 +34,14 @@ const MapWebView = (props: Props) => {
       setMapType(mapType);
     }
   };
+  const toggleCadastralLayerVisible = () => {
+    if (webViewRef.current) {
+      webViewRef.current.postMessage(
+        JSON.stringify({type: 'TOGGLE_CADASTRAL'}),
+      );
+      setIsCadastralLayerVisible(!isCadastralLayerVisible);
+    }
+  };
 
   const handlePostMessage = () => {};
 
@@ -36,14 +49,53 @@ const MapWebView = (props: Props) => {
     console.log(data);
   };
 
+  const handleLoadMarker = () => {
+    const first_markers = [
+      {
+        article_id: 1,
+        shorten_address: '도로개설1',
+        latitude: 37.3595704,
+        longitude: 127.105399,
+      },
+      {
+        article_id: 2,
+        shorten_address: '도로개설2',
+        latitude: 37.3699814,
+        longitude: 127.106399,
+      },
+      {
+        article_id: 3,
+        shorten_address: '도로개설3',
+        latitude: 37.3690926,
+        longitude: 127.105399,
+      },
+    ];
+
+    if (webViewRef.current) {
+      webViewRef.current.postMessage(
+        JSON.stringify({type: 'LOAD_MARKERS', value: first_markers}),
+      );
+      setIsCadastralLayerVisible(!isCadastralLayerVisible);
+    }
+  };
+
+  useEffect(() => {
+    // handleLoadMarker();
+  }, []);
+
   return (
     <>
-      <MapPannel mapType={mapType} setMapType={handleMapType} />
+      <MapPannel
+        mapType={mapType}
+        setMapType={handleMapType}
+        isCadastralLayerVisible={isCadastralLayerVisible}
+        toggleCadastralLayerVisible={toggleCadastralLayerVisible}
+      />
       <WebView
         ref={webViewRef}
         onMessage={handleOnMessage}
         source={{
-          uri: 'http://10.0.2.2:3000',
+          uri: 'https://b25e64afa9c9.ngrok.io',
         }}
       />
     </>

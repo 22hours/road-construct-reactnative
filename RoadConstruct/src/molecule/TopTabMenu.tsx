@@ -94,7 +94,7 @@ const TopTabMenu = () => {
         style={[ST.tab_item, ST.map_item_box]}>
         <Typho
           type={'LABEL'}
-          text={'지도보기'}
+          text={'지도\n보기'}
           extraStyle={[ST.tab_item__text, ST.map_item__text]}
         />
       </TouchableOpacity>
@@ -127,10 +127,11 @@ const ST = StyleSheet.create({
     color: 'black',
   },
   map_item_box: {
-    backgroundColor: Color.LIST_SCENE.TAB_MAP,
+    backgroundColor: Color.LIST_SCENE.MAP_BTN,
   },
   map_item__text: {
-    color: 'white',
+    color: 'black',
+    fontSize: 15,
   },
 });
 

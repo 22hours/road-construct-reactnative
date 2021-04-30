@@ -26,17 +26,22 @@ type Props = {
   value?: string;
 };
 
-const navermap_uri = (query?: string) =>
-  `https://m.map.naver.com/search2/search.naver?query=${query}`;
-
 const AddressText = ({label, value}: Props) => {
   const touchable = useRef<any>();
   const [showPopover, setShowPopover] = useState(false);
 
-  const dispatch = (type: string, param?: any) => {
+  const dispatch = async (type: string, param?: any) => {
     switch (type) {
       case 'MAP': {
-        Linking.openURL(navermap_uri(value));
+        const deeplink = `nmap://search?query=${value}&appname=com.roadconstruct`;
+        const navermap_uri = `https://m.map.naver.com/search2/search.naver?query=${value}`;
+
+        const isSupportedURL = await Linking.canOpenURL(deeplink);
+        if (isSupportedURL) {
+          await Linking.openURL(deeplink);
+        } else {
+          Linking.openURL(navermap_uri);
+        }
         setShowPopover(false);
         break;
       }

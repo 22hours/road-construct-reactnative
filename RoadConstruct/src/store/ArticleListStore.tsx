@@ -7,9 +7,6 @@ import React, {
   useReducer,
   useContext,
 } from 'react';
-import {API_CALL} from '~/api';
-
-// ELEMENT TYPES
 
 // STATE TYPES
 type State = {

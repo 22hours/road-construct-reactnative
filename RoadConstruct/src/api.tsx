@@ -5,9 +5,6 @@ import {api_types, meta_types} from '@global_types';
 
 export const DOMAIN = 'https://3543d13b2b1d.ngrok.io';
 
-// GET
-// export const LOCATION_LIST = '/locations';
-
 const h22_axios = axios.create({});
 h22_axios.interceptors.response.use(
   // SUCCESS INTERCEPT
@@ -71,7 +68,7 @@ const domain_reducer = (domain: params['domain']) => {
       return 'https://github.com';
     }
     case 'MAIN_HOST': {
-      return 'https://5cbca68277e4.ngrok.io';
+      return 'https://3bd2db929154.ngrok.io';
     }
   }
 };
@@ -84,7 +81,8 @@ type params_url =
   | 'STARRED LIST'
   | 'ARTICLE MARKER LIST'
   | 'ARTICLE DETAIL'
-  | 'ARTICLE NEWS LIST';
+  | 'ARTICLE NEWS LIST'
+  | 'USER_ALARMED_LOCATION_LIST';
 
 const endpoint_reducer = (
   url: params['url'],
@@ -109,11 +107,16 @@ const endpoint_reducer = (
       return '/article_count';
     }
     case 'ARTICLE NEWS LIST': {
-      return '/article_count';
+      return '/article_news';
     }
     case 'MEDIA LIST': {
       return '/media_list';
     }
+    case 'USER_ALARMED_LOCATION_LIST': {
+      return '/user_alarmed_location_list';
+    }
+    default:
+      throw new Error('API EP REDUCER ERROR');
   }
 };
 
@@ -131,7 +134,7 @@ export const API_CALL = async (
   url: params['url'],
   url_query?: params['url_query'],
   data?: params['data'],
-) => {
+): Promise<{result: 'SUCCESS'; data: any} | {result: 'ERROR'; msg: any}> => {
   var localData = await AsyncStorage.getItem('@auth');
   var header = localData ? JSON.parse(localData).access_token : undefined;
 

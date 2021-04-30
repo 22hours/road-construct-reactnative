@@ -6,7 +6,7 @@ type Props = {
   pdf_uri: string;
 };
 
-const PdfViewer = ({pdf_uri}: Props) => {
+const PdfViewer = React.memo(({pdf_uri}: Props) => {
   useEffect(() => {
     console.log('RENDER!');
   });
@@ -30,7 +30,7 @@ const PdfViewer = ({pdf_uri}: Props) => {
       />
     </View>
   );
-};
+});
 
 const styles = StyleSheet.create({
   container: {

@@ -8,6 +8,9 @@ import React, {
 } from 'react';
 import {api_types} from '@global_types';
 import {API_CALL} from '~/api';
+import {useLoader} from './AppGlobalLoadingStore';
+import {Alert} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 
 // ELEMENT TYPES
 
@@ -43,9 +46,11 @@ export const ArticleDetailProvider = ({
   article_id: number;
   children: JSX.Element;
 }) => {
+  const navigation = useNavigation();
+  const loadDispatch = useLoader();
   const [state, dispatch] = useReducer(reducer, {
     topic_content: {
-      content: 'content',
+      content: '',
       article_file_list: [],
     },
     related_address: {
@@ -58,21 +63,26 @@ export const ArticleDetailProvider = ({
     },
     related_contact: [],
     starred: false,
+    article_id: article_id,
   });
 
   const getDetailData = async () => {
     console.log({article_id});
+    loadDispatch({type: 'SHOW_LOADER'});
     const rest_data = await API_CALL(
       'get',
       'MAIN_HOST',
       'ARTICLE DETAIL',
       article_id,
     );
+    loadDispatch({type: 'HIDE_LOADER'});
+
     if (rest_data) {
       if (rest_data?.result === 'SUCCESS') {
         dispatch({type: 'SET_STATE', data: rest_data.data});
       } else {
-        console.error('API ERROR OCCURED');
+        Alert.alert('존재하지 않거나, 삭제된 소식입니다.');
+        navigation.goBack();
       }
     }
   };
@@ -80,10 +90,6 @@ export const ArticleDetailProvider = ({
   useEffect(() => {
     getDetailData();
   }, []);
-
-  useEffect(() => {
-    console.log(state);
-  }, [state]);
 
   return (
     <ArticleDetailContext.Provider value={state}>
@@ -113,7 +119,7 @@ export const useArticleDetailStoreState = (type: Type): any => {
     case 'RELATED_CONTACT':
       return state.related_contact;
     case 'STARRED':
-      return state.starred;
+      return {starred: state.starred, article_id: state.article_id};
     default:
       throw new Error('ARTICLE DETAIL STORE ERROR IN :: USE STORE STATE');
   }

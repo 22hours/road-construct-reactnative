@@ -17,11 +17,13 @@ const Color = {
     TAB_ON: '#D0CECE',
     FILTER_BACK: '#E7E6E6',
     BORDER: '#DDDDDD',
+    MAP_BTN: '#ffc200',
   },
   DETAIL_SCENE: {
     SECTION_HEADER: '#2F5597',
     BUTTON: '#A6A6A6',
     FILTER_BACK: '#E7E6E6',
+    BOTTOM_TAB: '#F2F2F2',
   },
 };
 

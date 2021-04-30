@@ -13,6 +13,7 @@ import {
   Text,
   StatusBar,
   Linking,
+  Dimensions,
 } from 'react-native';
 
 // STORE
@@ -39,11 +40,18 @@ import ViewShotArea from '~/organism/ViewShotArea';
 import ArticleButton from '~/atom/ArticleButton';
 import AddressText from '~/molecule/AddressText';
 import ArticleImage from '~/atom/ArticleImage';
+import CustomIcon from '~/atom/CustomIcon';
+
 import {toastAlert} from '~/util';
 import {useNavigation} from '@react-navigation/native';
 
 // ICONS
 import Icon_AntDesign from 'react-native-vector-icons/AntDesign';
+import {useLoader} from '~/store/AppGlobalLoadingStore';
+import {
+  useArticleDetailViewShot,
+  ViewShotProvider,
+} from '~/store/ViewShotStore';
 
 type DATA_Type = api_types.api_response__article_detail;
 
@@ -53,12 +61,18 @@ type DATA_Type = api_types.api_response__article_detail;
 const ArticleSection = ({
   section_title,
   section_bodies,
+  isFinal = false,
 }: {
   section_title: string;
   section_bodies: Array<JSX.Element>;
+  isFinal?: boolean;
 }) => {
   return (
-    <View style={ST.section_wrapper}>
+    <View
+      style={[
+        ST.section_wrapper,
+        isFinal && {borderBottomWidth: 0, marginBottom: 5},
+      ]}>
       <View style={ST.section_header_wrapper}>
         <Text style={ST.section_header}>
           <Typho
@@ -89,12 +103,19 @@ const SECITON__TOPIC_CONTENT = React.memo(() => {
     'TOPIC_CONTENT',
   );
 
-  const handlePressPDF = useCallback(() => {
-    var origin_pdf_file_url = state.article_file_list[0].url;
-    navigation.navigate(GlobalEnum.Route.PDF_SCENE, {
-      pdf_uri: origin_pdf_file_url,
-    });
-  }, []);
+  const handlePressPDF = () => {
+    console.log(state);
+    var pdf_length = state.article_file_list?.length;
+    if (pdf_length >= 1) {
+      var origin_pdf_file_url = state.article_file_list[0].url;
+      navigation.navigate(GlobalEnum.Route.PDF_SCENE, {
+        origin_pdf_uri: origin_pdf_file_url,
+        pdf_uri_list: state.article_file_list,
+      });
+    } else {
+      toastAlert('등록된 원문이 없습니다');
+    }
+  };
   return (
     <ArticleSection
       section_title={'주요 내용'}
@@ -107,11 +128,7 @@ const SECITON__TOPIC_CONTENT = React.memo(() => {
               extraStyle={{color: 'black'}}
             />
             {state.article_file_list?.length >= 1 && (
-              <ArticleButton
-                text={'원문 보기'}
-                icon={'원문 보기'}
-                onPress={handlePressPDF}
-              />
+              <ArticleButton text={'원문 보기'} onPress={handlePressPDF} />
             )}
           </View>,
         ]
@@ -130,6 +147,17 @@ const SECITON__RELATED_ADDRESS = React.memo(() => {
     }) => {
       const [isCollapse, setIsCollapse] = useState<Boolean>(false);
       const toggleIsCollapse = () => setIsCollapse(!isCollapse);
+
+      const LinkingToNaverMap = async () => {
+        const deeplink = `nmap://search?query=${'더 현대 서울'}&appname=com.roadconstruct`;
+
+        const isSupportedURL = await Linking.canOpenURL(deeplink);
+        if (isSupportedURL) {
+          await Linking.openURL(deeplink);
+        } else {
+          Linking.openURL(`https://m.map.naver.com`);
+        }
+      };
 
       const ST = StyleSheet.create({
         container: {},
@@ -161,15 +189,15 @@ const SECITON__RELATED_ADDRESS = React.memo(() => {
             </View>
             <View>
               <ArticleButton
-                onPress={() => Linking.openURL('https://www.nav')}
+                onPress={() => LinkingToNaverMap()}
                 text={'지도 보기'}
-                icon={'지도 보기'}
               />
               <View style={{marginBottom: 20}} />
               <ArticleButton
-                onPress={() => toastAlert('TODO')}
+                onPress={() =>
+                  Linking.openURL('https://www.eum.go.kr/web/mp/mpMapDet.jsp')
+                }
                 text={'도면 보기'}
-                icon={'도면 보기'}
               />
             </View>
           </View>
@@ -282,8 +310,8 @@ const SECTION__ARTICLE_STEP = React.memo(() => {
                           ? {
                               color: '#C00003',
                               backgroundColor: '#E7E6E6',
-                              paddingHorizontal: 10,
-                              paddingVertical: 5,
+                              paddingHorizontal: 7,
+                              paddingVertical: 3,
                               borderRadius: 3,
                             }
                           : {color: 'black'},
@@ -293,7 +321,7 @@ const SECTION__ARTICLE_STEP = React.memo(() => {
                   </View>
 
                   {idx !== state.step_list.length - 1 && (
-                    <Icon_AntDesign name="down" style={{paddingLeft: 10}} />
+                    <Icon_AntDesign name="down" style={{paddingLeft: 15}} />
                   )}
                 </View>
               );
@@ -338,13 +366,20 @@ const SECITON__RELREATED_CONTACT = React.memo(() => {
         <Typho type={'LABEL'} text={source} />
         <View style={{marginBottom: 10}} />
         {contact?.map((it, idx) => (
-          <View key={idx} style={{marginBottom: 20}}>
+          <View
+            key={idx}
+            style={{
+              marginBottom: 20,
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+            }}>
+            <View style={{flexDirection: 'row'}}>
+              <Typho type={'H5'} text={it.name} extraStyle={{marginRight: 5}} />
+              <Typho type={'H5'} text={`(${it.phone_num})`} />
+            </View>
             <ArticleButton
               key={`CALL_${idx}`}
-              text={it.name}
-              icon={'전화 걸기'}
-              isExpand={true}
-              expandText={'전화 걸기'}
+              text={'전화 걸기'}
               onPress={() => Linking.openURL(`tel:${it.phone_num}`)}
             />
           </View>
@@ -352,16 +387,10 @@ const SECITON__RELREATED_CONTACT = React.memo(() => {
       </View>
     );
   };
-  const Button = ({text, onPress}) => {
-    return (
-      <TouchableOpacity style={ST.button} onPress={() => onPress()}>
-        <Typho type={'LABEL'} text={text} extraStyle={ST.button__text} />
-      </TouchableOpacity>
-    );
-  };
 
   return (
     <ArticleSection
+      isFinal={true}
       section_title={'관련 문의'}
       section_bodies={[
         <View>
@@ -374,15 +403,76 @@ const SECITON__RELREATED_CONTACT = React.memo(() => {
               />
             ))}
         </View>,
-        <View style={ST.button_container}>
-          <Button text={'공유'} onPress={() => {}} />
-          <Button text={'내 관심'} onPress={() => {}} />
-          <Button text={'관련 기사'} onPress={() => {}} />
-        </View>,
       ]}></ArticleSection>
   );
 });
+const SECTION__USER_ACTION = React.memo(
+  ({article_id}: {article_id: number}) => {
+    const state = useArticleDetailStoreState('STARRED');
+    const viewShot = useArticleDetailViewShot();
+    const loadDispath = useLoader();
+    const width = Dimensions.get('window').width;
+    const navigation = useNavigation();
+    const ST = StyleSheet.create({
+      container: {
+        backgroundColor: Color.DETAIL_SCENE.BOTTOM_TAB,
+        bottom: 0,
+        left: 0,
+        right: 0,
+        width: width,
+        paddingVertical: 10,
 
+        marginLeft: -10,
+        marginBottom: -10,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+      },
+      itembox: {
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
+      itemtext: {
+        marginTop: 5,
+        marginBottom: 5,
+      },
+    });
+
+    const action_starred = async () => {
+      loadDispath({type: 'SHOW_LOADER'});
+      await setTimeout(() => loadDispath({type: 'HIDE_LOADER'}), 1500);
+      toastAlert('내 관심에 등록하였습니다');
+    };
+
+    const action_shared = () => {
+      viewShot(null);
+    };
+
+    const action_news = () => {
+      navigation.navigate(GlobalEnum.Route.ARTICLE_NEWS, {
+        article_id: article_id,
+      });
+    };
+
+    return (
+      <View style={ST.container}>
+        <TouchableOpacity onPress={() => action_starred()} style={ST.itembox}>
+          <CustomIcon type={'STAR'} />
+          <Typho type={'LABEL'} text={'내 관심'} extraStyle={ST.itemtext} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => action_shared()} style={ST.itembox}>
+          <CustomIcon type={'SHARE'} />
+          <Typho type={'LABEL'} text={'공유하기'} extraStyle={ST.itemtext} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => action_news()} style={ST.itembox}>
+          <CustomIcon type={'DOCUMENT'} />
+          <Typho type={'LABEL'} text={'관련기사'} extraStyle={ST.itemtext} />
+        </TouchableOpacity>
+      </View>
+    );
+  },
+);
 ////////////////////////////////////////////////////
 //  SCENE
 ////////////////////////////////////////////////////
@@ -394,19 +484,19 @@ const ArticleDetailScene = (props: Props) => {
   const article_id = props.route?.params?.article_id;
   return (
     <ArticleDetailProvider article_id={article_id}>
-      <SceneLayout isScrollAble={true}>
-        <ViewShotArea navigation={props.navigation}>
-          <>
-            <SECITON__TOPIC_CONTENT />
-            <SECITON__RELATED_ADDRESS />
-            <SECTION__ARTICLE_STEP />
-            <SECITON__RELREATED_CONTACT />
-            {/* <Article_Releated />
-            <Article_PastRelated />
-            <Article_Contact /> */}
-          </>
-        </ViewShotArea>
-      </SceneLayout>
+      <>
+        <SceneLayout isScrollAble={true}>
+          <ViewShotProvider>
+            <>
+              <SECITON__TOPIC_CONTENT />
+              <SECITON__RELATED_ADDRESS />
+              <SECTION__ARTICLE_STEP />
+              <SECITON__RELREATED_CONTACT />
+              <SECTION__USER_ACTION article_id={article_id} />
+            </>
+          </ViewShotProvider>
+        </SceneLayout>
+      </>
     </ArticleDetailProvider>
   );
 };

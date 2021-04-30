@@ -37,10 +37,6 @@ const MainScene = (props: Props) => {
   const navigation = useNavigation();
   const locationData = useLocationData();
 
-  // const handleClickItem = useCallback(si => {
-  //   navigation.navigate(GlobalEnum.Route.ARTICLE_LIST, {initSi: si});
-  // }, []);
-
   const handleClickItem = si => {
     navigation.navigate(GlobalEnum.Route.ARTICLE_LIST, {initSi: si});
   };

@@ -20,7 +20,8 @@ import ArticleDetailScene from '~/scene/ArticleDetailScene';
 import PdfDetailScene from '~/scene/PdfDetailScene';
 import MapScene from '~/scene/MapScene';
 import ImageWebViewScene from '~/scene/ImageWebViewScene';
-import GlobalLoader from './organism/GlobalLoader';
+import AlarmSettingScene from '~/scene/AlarmSettingScene';
+import ArticleNewsScene from '~/scene/ArticleNewsScene';
 
 const Stack = createStackNavigator();
 const RouterInner = () => {
@@ -44,6 +45,20 @@ const RouterInner = () => {
         <Stack.Screen
           name="ARTICLE_DETAIL"
           component={ArticleDetailScene}
+          options={{
+            header: props => <SceneHeader {...props} />,
+          }}
+        />
+        <Stack.Screen
+          name="ARTICLE_NEWS"
+          component={ArticleNewsScene}
+          options={{
+            header: props => <SceneHeader {...props} />,
+          }}
+        />
+        <Stack.Screen
+          name="ALARM_SETTING"
+          component={AlarmSettingScene}
           options={{
             header: props => <SceneHeader {...props} />,
           }}

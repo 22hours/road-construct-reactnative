@@ -6,6 +6,9 @@ import {toastAlert} from '~/util';
 
 import Icon_FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FastImage from 'react-native-fast-image';
+import CustomIcon from '~/atom/CustomIcon';
+import {useNavigation} from '@react-navigation/native';
+import GlobalEnum from '~/GlobalEnum';
 
 type Props = {
   scene?: any;
@@ -15,17 +18,14 @@ type Props = {
   handleGotoAlarm?: () => any;
 };
 
-const SceneHeader = ({
-  handleGotoAlarm = () => toastAlert('TODO'),
-  handleShare = () => toastAlert('TODO'),
-}: Props) => {
+const SceneHeader = ({handleShare = () => toastAlert('TODO')}: Props) => {
+  const navigation = useNavigation();
+  const handleGoToAlarm = () => {
+    navigation.navigate(GlobalEnum.Route.ALARM_SETTING);
+  };
   return (
     <>
-      <View
-        // start={{x: 0, y: 0}}
-        // end={{x: 1, y: 0}}
-        // colors={['#1E3C72', '#2A5298']}
-        style={[ST.container]}>
+      <View style={[ST.container]}>
         <View style={ST.left_side}>
           <FastImage
             source={require('./../../images/logo.png')}
@@ -40,11 +40,11 @@ const SceneHeader = ({
         <View style={ST.button_container}>
           <TouchableOpacity
             style={ST.icon_buton}
-            onPress={() => handleGotoAlarm()}>
-            <Icon_FontAwesome name="bell" style={ST.icon} />
+            onPress={() => handleGoToAlarm()}>
+            <CustomIcon type={'BELL'} />
           </TouchableOpacity>
           <TouchableOpacity style={ST.icon_buton} onPress={() => handleShare()}>
-            <Icon_FontAwesome name="share-square-o" style={ST.icon} />
+            <CustomIcon type={'SHARE'} />
           </TouchableOpacity>
         </View>
       </View>
@@ -80,7 +80,7 @@ const ST = StyleSheet.create({
     padding: 10,
   },
   icon: {
-    color: 'white',
+    color: 'black',
     fontSize: 16,
   },
 });

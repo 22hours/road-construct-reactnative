@@ -17,13 +17,10 @@ import Icon_FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 type Props = {
   text: string;
-  icon: string;
-  isExpand?: Boolean;
-  expandText?: string;
   onPress: () => void;
 };
 
-const RenderIconBody = ({text, icon, isExpand, expandText, onPress}: Props) => {
+const RenderIconBody = ({text, onPress}: Props) => {
   return (
     <TouchableOpacity onPress={() => onPress()} style={ST.section_button}>
       <View style={ST.section_button__left}>
@@ -32,29 +29,27 @@ const RenderIconBody = ({text, icon, isExpand, expandText, onPress}: Props) => {
           text={text}
           extraStyle={ST.section_button__text}
         />
-        {isExpand && (
-          <Typho
-            type={'LABEL'}
-            text={expandText}
-            extraStyle={ST.section_button__text}
-          />
-        )}
       </View>
     </TouchableOpacity>
   );
 };
 
 const ArticleButton = (props: Props) => {
-  const {text, icon, isExpand, expandText} = props;
-  if (isExpand) {
-    return <RenderIconBody {...props} />;
-  } else {
-    return (
-      <Text>
-        <RenderIconBody {...props} />
-      </Text>
-    );
-  }
+  return (
+    <Text>
+      <TouchableOpacity
+        onPress={() => props.onPress()}
+        style={ST.section_button}>
+        <View style={ST.section_button__left}>
+          <Typho
+            type={'LABEL'}
+            text={props.text}
+            extraStyle={ST.section_button__text}
+          />
+        </View>
+      </TouchableOpacity>
+    </Text>
+  );
 };
 
 const ST = StyleSheet.create({
