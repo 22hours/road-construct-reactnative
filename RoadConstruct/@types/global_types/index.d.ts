@@ -118,6 +118,18 @@ declare module '@global_types' {
     type api_response__article_marker_list = Array<article_marker>;
 
     /* 
+    GET : ARTICLE MARKER DETAIL
+    https://www.notion.so/granditnomad/ee51ca61e36f4701b76b107eaccdedb4?p=db6832f084a544d9ad22fd13c4340178
+    */
+    type article_marker_detail = {
+      article_id: number;
+      title: string;
+      summary: string;
+      date: number | string;
+      starred: boolean;
+    };
+
+    /* 
     GET : ARTICLE NEWS LIST
     https://www.notion.so/granditnomad/ee51ca61e36f4701b76b107eaccdedb4?p=db6832f084a544d9ad22fd13c4340178
     */

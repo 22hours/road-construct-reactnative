@@ -68,12 +68,13 @@ const domain_reducer = (domain: params['domain']) => {
       return 'https://github.com';
     }
     case 'MAIN_HOST': {
-      return 'https://3bd2db929154.ngrok.io';
+      return 'https://b4da96832795.ngrok.io';
     }
   }
 };
 
 type params_url =
+  | 'NEW_SI_LIST'
   | 'LOCATION_LIST'
   | 'ARTICLE COUNT'
   | 'ARTICLE LIST'
@@ -81,6 +82,7 @@ type params_url =
   | 'STARRED LIST'
   | 'ARTICLE MARKER LIST'
   | 'ARTICLE DETAIL'
+  | 'ARTICLE_DETAIL_MARKER'
   | 'ARTICLE NEWS LIST'
   | 'USER_ALARMED_LOCATION_LIST';
 
@@ -89,6 +91,9 @@ const endpoint_reducer = (
   url_query: params['url_query'],
 ) => {
   switch (url) {
+    case 'NEW_SI_LIST': {
+      return '/new_si_list';
+    }
     // GET :  LOCATION
     case 'LOCATION_LIST': {
       return '/locations';
@@ -104,13 +109,19 @@ const endpoint_reducer = (
       return '/article_list';
     }
     case 'ARTICLE MARKER LIST': {
-      return '/article_count';
+      return '/article_marker_list';
+    }
+    case 'ARTICLE_DETAIL_MARKER': {
+      return '/article_marker_detail';
     }
     case 'ARTICLE NEWS LIST': {
       return '/article_news';
     }
     case 'MEDIA LIST': {
       return '/media_list';
+    }
+    case 'STARRED LIST': {
+      return '/starred_list';
     }
     case 'USER_ALARMED_LOCATION_LIST': {
       return '/user_alarmed_location_list';
@@ -135,6 +146,7 @@ export const API_CALL = async (
   url_query?: params['url_query'],
   data?: params['data'],
 ): Promise<{result: 'SUCCESS'; data: any} | {result: 'ERROR'; msg: any}> => {
+  console.log('API_CALLED : ', data);
   var localData = await AsyncStorage.getItem('@auth');
   var header = localData ? JSON.parse(localData).access_token : undefined;
 

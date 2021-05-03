@@ -1,4 +1,5 @@
 import {useNavigation} from '@react-navigation/native';
+import axios from 'axios';
 import React, {
   useState,
   useEffect,
@@ -11,6 +12,7 @@ import {API_CALL} from '~/api';
 import {useLoader} from '~/store/AppGlobalLoadingStore';
 import {useLocationData} from '~/store/AppGlobalStore';
 import {toastAlert} from '~/util';
+let axiosSource = axios.CancelToken.source();
 
 // ELEMENT TYPES
 
@@ -133,7 +135,7 @@ export const AlarmSettingProvider = ({children}) => {
     setTimeout(() => {
       loaderDispatch({type: 'HIDE_LOADER'});
       toastAlert('설정 완료');
-      //   naviagtion.goBack();
+      naviagtion.goBack();
     }, 1500);
   };
   const init = async () => {
@@ -178,6 +180,12 @@ export const AlarmSettingProvider = ({children}) => {
 
   useEffect(() => {
     init();
+    return () => {
+      if (axiosSource) {
+        axiosSource.cancel('Landing Component got unmounted');
+        loaderDispatch({type: 'HIDE_LOADER'});
+      }
+    };
   }, []);
 
   const store = {

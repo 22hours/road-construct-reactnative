@@ -8,7 +8,11 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {NavigationContainer, useNavigation} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
+import {
+  createStackNavigator,
+  CardStyleInterpolators,
+  TransitionSpecs,
+} from '@react-navigation/stack';
 
 // LAYOUT
 import SceneHeader from '~/layout/SceneHeader';
@@ -27,7 +31,12 @@ const Stack = createStackNavigator();
 const RouterInner = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator headerMode={'screen'}>
+      <Stack.Navigator
+        headerMode={'screen'}
+        // screenOptions={{
+        //   cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        // }}
+      >
         <Stack.Screen
           name="MAIN_SCENE"
           component={MainScene}
@@ -47,6 +56,7 @@ const RouterInner = () => {
           component={ArticleDetailScene}
           options={{
             header: props => <SceneHeader {...props} />,
+            cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
           }}
         />
         <Stack.Screen
@@ -61,6 +71,7 @@ const RouterInner = () => {
           component={AlarmSettingScene}
           options={{
             header: props => <SceneHeader {...props} />,
+            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
           }}
         />
         <Stack.Screen

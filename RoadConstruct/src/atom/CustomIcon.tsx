@@ -3,7 +3,7 @@ import {Image, ImageStyle, StyleSheet} from 'react-native';
 import FastImage from 'react-native-fast-image';
 
 type Props = {
-  type: 'STAR' | 'SHARE' | 'BELL' | 'CHECK' | 'DOCUMENT';
+  type: 'STAR' | 'SHARE' | 'BELL' | 'CHECK' | 'DOCUMENT' | 'BLUE_STAR';
   width?: number;
   height?: number;
   color?: string;
@@ -21,6 +21,8 @@ const getIconImage = (type: Props['type']) => {
       return require('./../../images/icon/star.png');
     case 'DOCUMENT':
       return require('./../../images/icon/document.png');
+    case 'BLUE_STAR':
+      return require('./../../images/icon/blue_star.png');
     default:
       throw new Error('GET ICON IMAGE ERROR :: CUSTOM ICON TSX');
   }

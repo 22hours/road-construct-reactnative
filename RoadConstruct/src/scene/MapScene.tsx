@@ -20,68 +20,51 @@ import SceneLayout from '~/layout/SceneLayout';
 
 // ENUM
 import GlobalEnum from '~/GlobalEnum';
+import {API_CALL} from '~/api';
+import {toastAlert} from '~/util';
+import {api_types} from '@global_types';
+import {useLoader} from '~/store/AppGlobalLoadingStore';
 
 type Props = {
   route: any;
 };
 
-type MapType = 'ARTICLE_LIST' | 'ARTICLE_DETAIL';
-
-type ArticleListMapProps = {
-  start_coords: {
-    latitude: number;
-    longitude: number;
-  };
+type position = {
+  latitude: number;
+  longitude: number;
 };
-
-type ArticleDetailMapProps = {
-  start_coords: {
-    latitude: number;
-    longitude: number;
-  };
-};
+type Marker_list = Array<api_types.article_marker>;
 
 const MapScene = ({route}: Props) => {
-  const navigation = useNavigation();
-  const {type} = route?.params;
-  const [mapProps, setMapProps] = useState<
-    ArticleListMapProps | ArticleDetailMapProps
-  >();
+  const loaderDispatch = useLoader();
+  const [markerList, setMarkerList] = useState<Marker_list | null>(null);
 
-  const setArticleListMapProps = () => {
-    Geolocation.getCurrentPosition(
-      position => {
-        setMapProps({
-          start_coords: {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          },
-        });
-      },
-      error => {
-        Alert.alert(
-          'GPS 서비스 오류',
-          'GPS 서비스에 오류가 발생하였습니다\n핸드폰의 GPS설정을 확인한 뒤, 지도를 다시 열어 주세요',
+  const getArticleMarkerList = async () => {
+    loaderDispatch({
+      type: 'SHOW_LOADER',
+      text: '소식 데이터 불러오는 중',
+    });
+    var rest_data = await API_CALL('get', 'MAIN_HOST', 'ARTICLE MARKER LIST');
+    loaderDispatch({type: 'HIDE_LOADER'});
+
+    if (rest_data) {
+      if (rest_data.result === 'SUCCESS') {
+        var marker_data = rest_data.data;
+        setMarkerList(marker_data);
+      } else {
+        toastAlert(
+          '지도 데이터를 불러오는 중 문제가 발생했습니다. 다시 시도해주세요',
         );
-        navigation.goBack();
-      },
-      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-    );
-  };
-
-  const setArticleDetailMapProps = () => {
-    console.log('TODO');
-  };
-
-  useEffect(() => {
-    if (type === 'ARTICLE_LIST') {
-      setArticleListMapProps();
-    } else {
-      setArticleDetailMapProps();
+      }
     }
+  };
+
+  // STEP 1
+  useEffect(() => {
+    getArticleMarkerList();
   }, []);
 
-  return <>{mapProps && <MapWebView {...mapProps} />}</>;
+  return <>{markerList && <MapWebView markerList={markerList} />}</>;
 };
 
 const styles = StyleSheet.create({});

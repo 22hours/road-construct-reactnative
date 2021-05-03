@@ -11,6 +11,8 @@ import {API_CALL} from '~/api';
 import {useLoader} from './AppGlobalLoadingStore';
 import {Alert} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import axios from 'axios';
+let axiosSource = axios.CancelToken.source();
 
 // ELEMENT TYPES
 
@@ -89,6 +91,12 @@ export const ArticleDetailProvider = ({
 
   useEffect(() => {
     getDetailData();
+    return () => {
+      if (axiosSource) {
+        loadDispatch({type: 'HIDE_LOADER'});
+        axiosSource.cancel('Landing Component got unmounted');
+      }
+    };
   }, []);
 
   return (
@@ -119,7 +127,7 @@ export const useArticleDetailStoreState = (type: Type): any => {
     case 'RELATED_CONTACT':
       return state.related_contact;
     case 'STARRED':
-      return {starred: state.starred, article_id: state.article_id};
+      return state.starred;
     default:
       throw new Error('ARTICLE DETAIL STORE ERROR IN :: USE STORE STATE');
   }

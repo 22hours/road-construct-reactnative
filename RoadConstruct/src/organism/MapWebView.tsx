@@ -1,4 +1,5 @@
-import React, {useState, useEffect, useRef} from 'react';
+import {api_types} from '@global_types';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -7,101 +8,172 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
-import {WebView} from 'react-native-webview';
+import {WebView, WebViewMessageEvent} from 'react-native-webview';
+import ArticleMapDrawer from '~/molecule/ArticleMapDrawer';
 import MapPannel from '~/molecule/MapPannel';
+import {useLoader} from '~/store/AppGlobalLoadingStore';
+import {toastAlert} from '~/util';
 
-type Props = {};
+type Props = {
+  markerList: Array<api_types.article_marker>;
+};
 
-const MapWebView = (props: Props) => {
-  const [mapType, setMapType] = useState<number>(0);
+type mapType = 'normal' | 'hybrid' | 'terrain';
+
+const MapWebView = ({markerList}: Props) => {
+  const [mapType, setMapType] = useState<mapType>('normal');
   const [
     isCadastralLayerVisible,
     setIsCadastralLayerVisible,
   ] = useState<boolean>(false);
 
+  const loaderDispatch = useLoader();
+  const [overlayState, setOverlayState] = useState<{
+    article_id: number | null;
+    isVisible: boolean;
+  }>({
+    article_id: null,
+    isVisible: false,
+  });
+
   const webViewRef = useRef<WebView | null>(null);
 
-  const handleMapType = (mapType: number) => {
-    var eng_map_type: string = 'normal';
-    if (mapType === 0) eng_map_type = 'normal';
-    else if (mapType === 2) eng_map_type = 'satellite';
-    else if (mapType === 4) eng_map_type = 'terrain';
+  ////////////////////////////////////////////////////////////////////
+  // SEND MESSAGE
+  type sendPostMessageAction =
+    | {type: 'LOAD_MARKERS'; data: any}
+    | {type: 'SET_MAP_TYPE'; data: any}
+    | {type: 'TOGGLE_CADASTRAL'}
+    | {type: 'MOVE_CURRENT_LOCATION'};
 
-    if (webViewRef.current) {
-      webViewRef.current.postMessage(
-        JSON.stringify({type: 'SET_MAP_TYPE', value: eng_map_type}),
-      );
-      setMapType(mapType);
+  const sendPostMessageToWeb = (action: sendPostMessageAction) => {
+    var res_value: any = null;
+    var callBackAction: () => void = () => toastAlert('TODO');
+    switch (action.type) {
+      case 'LOAD_MARKERS': {
+        res_value = {type: action.type, data: markerList};
+        break;
+      }
+      case 'SET_MAP_TYPE': {
+        res_value = {type: action.type, data: action.data};
+        callBackAction = () => setMapType(action.data);
+        break;
+      }
+      case 'TOGGLE_CADASTRAL': {
+        res_value = {type: action.type};
+        callBackAction = () =>
+          setIsCadastralLayerVisible(!isCadastralLayerVisible);
+        break;
+      }
+      case 'MOVE_CURRENT_LOCATION': {
+        sendPostMessageToWeb({type: 'MOVE_CURRENT_LOCATION'});
+        break;
+      }
+      default:
+        throw new Error('TYPE ERROR : DISPATCH POST MESSAGE :: MAPWEBVIEW');
     }
-  };
-  const toggleCadastralLayerVisible = () => {
     if (webViewRef.current) {
-      webViewRef.current.postMessage(
-        JSON.stringify({type: 'TOGGLE_CADASTRAL'}),
-      );
-      setIsCadastralLayerVisible(!isCadastralLayerVisible);
-    }
-  };
-
-  const handlePostMessage = () => {};
-
-  const handleOnMessage = ({nativeEvent: {data}}) => {
-    console.log(data);
-  };
-
-  const handleLoadMarker = () => {
-    const first_markers = [
-      {
-        article_id: 1,
-        shorten_address: '도로개설1',
-        latitude: 37.3595704,
-        longitude: 127.105399,
-      },
-      {
-        article_id: 2,
-        shorten_address: '도로개설2',
-        latitude: 37.3699814,
-        longitude: 127.106399,
-      },
-      {
-        article_id: 3,
-        shorten_address: '도로개설3',
-        latitude: 37.3690926,
-        longitude: 127.105399,
-      },
-    ];
-
-    if (webViewRef.current) {
-      webViewRef.current.postMessage(
-        JSON.stringify({type: 'LOAD_MARKERS', value: first_markers}),
-      );
-      setIsCadastralLayerVisible(!isCadastralLayerVisible);
+      webViewRef.current.postMessage(JSON.stringify(res_value));
+      callBackAction();
     }
   };
 
-  useEffect(() => {
-    // handleLoadMarker();
+  ////////////////////////////////////////////////////////////////////
+  // RECIVE MESSAGE
+  type recivePostMessageAction =
+    | {type: 'MAP_LOAD_END'}
+    | {type: 'CLICK_MARKER'; data: any}
+    | {type: 'CLICK_MAP'};
+  const recivePostMessageFromWeb = (action: recivePostMessageAction) => {
+    switch (action.type) {
+      case 'MAP_LOAD_END': {
+        loaderDispatch({type: 'HIDE_LOADER'});
+        sendPostMessageToWeb({type: 'LOAD_MARKERS', data: markerList});
+        break;
+      }
+      case 'CLICK_MARKER': {
+        setOverlayState({
+          article_id: action.data.article_id,
+          isVisible: true,
+        });
+        break;
+      }
+      case 'CLICK_MAP': {
+        setOverlayState({
+          article_id: null,
+          isVisible: false,
+        });
+        break;
+      }
+      default: {
+        return;
+      }
+    }
+  };
+
+  // PROPS DISPATCH
+  const toggleCadastralLayerVisible = useCallback(() => {
+    sendPostMessageToWeb({type: 'TOGGLE_CADASTRAL'});
+  }, []);
+  const initOverlayState = useCallback(() => {
+    setOverlayState({
+      article_id: null,
+      isVisible: false,
+    });
+  }, []);
+  const handleOnMessage = useCallback(({nativeEvent: {data}}) => {
+    try {
+      var data_obj = JSON.parse(data);
+      console.log(data_obj);
+      recivePostMessageFromWeb(data_obj);
+    } catch {
+      toastAlert('현재 지도 서버에 문제가있습니다.');
+    }
   }, []);
 
+  useEffect(() => {
+    // loaderDispatch({type: 'SHOW_LOADER'});
+    return () => {
+      loaderDispatch({type: 'HIDE_LOADER'});
+    };
+  }, []);
   return (
     <>
+      <MemoizedWebview
+        webViewRef={webViewRef}
+        handleOnMessage={handleOnMessage}
+      />
       <MapPannel
         mapType={mapType}
-        setMapType={handleMapType}
+        setMapType={(type: mapType) =>
+          sendPostMessageToWeb({type: 'SET_MAP_TYPE', data: type})
+        }
         isCadastralLayerVisible={isCadastralLayerVisible}
         toggleCadastralLayerVisible={toggleCadastralLayerVisible}
       />
-      <WebView
-        ref={webViewRef}
-        onMessage={handleOnMessage}
-        source={{
-          uri: 'https://b25e64afa9c9.ngrok.io',
-        }}
-      />
+      <ArticleMapDrawer {...overlayState} initOverlayState={initOverlayState} />
     </>
   );
 };
 
-const styles = StyleSheet.create({});
+const MemoizedWebview = React.memo(
+  ({
+    webViewRef,
+    handleOnMessage,
+  }: {
+    webViewRef: React.MutableRefObject<WebView<{}> | null>;
+    handleOnMessage: (event: WebViewMessageEvent) => void;
+  }) => {
+    return (
+      <WebView
+        ref={webViewRef}
+        onMessage={handleOnMessage}
+        source={{
+          uri: 'https://64a73af10800.ngrok.io',
+        }}
+      />
+    );
+  },
+);
 
 export default MapWebView;

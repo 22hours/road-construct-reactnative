@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -10,8 +10,9 @@ import {
 import Color from '~/Color';
 import Typho from '~/Typho';
 
+type mapType = 'normal' | 'hybrid' | 'terrain';
 type Props = {
-  mapType: number;
+  mapType: mapType;
   setMapType: (param: any) => void;
   isCadastralLayerVisible: boolean;
   toggleCadastralLayerVisible: () => void;
@@ -23,21 +24,25 @@ const MapPannel = ({
   isCadastralLayerVisible,
   toggleCadastralLayerVisible,
 }: Props) => {
-  const panel_list = [
+  const panel_list: Array<{
+    label_text: string;
+    map_type: mapType;
+    onPress: () => void;
+  }> = [
     {
       label_text: '지도',
-      map_type: 0,
-      onPress: () => setMapType(0),
+      map_type: 'normal',
+      onPress: useCallback(() => setMapType('normal'), []),
     },
     {
       label_text: '위성',
-      map_type: 2,
-      onPress: () => setMapType(2),
+      map_type: 'hybrid',
+      onPress: useCallback(() => setMapType('hybrid'), []),
     },
     {
-      label_text: '지적도',
-      map_type: 4,
-      onPress: () => setMapType(4),
+      label_text: '지형도',
+      map_type: 'terrain',
+      onPress: useCallback(() => setMapType('terrain'), []),
     },
   ];
   return (
@@ -114,6 +119,7 @@ const ST = StyleSheet.create({
   },
   panel_button__text: {
     color: 'black',
+    textAlign: 'center',
   },
   panel_button__text_on: {
     color: 'white',

@@ -1,4 +1,10 @@
-import React, {useState, useEffect, useReducer, useCallback} from 'react';
+import React, {
+  useState,
+  useEffect,
+  useReducer,
+  useCallback,
+  useRef,
+} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -6,6 +12,7 @@ import {
   View,
   Text,
   TouchableOpacity,
+  TouchableNativeFeedback,
 } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import {meta_types} from '@global_types';
@@ -34,22 +41,33 @@ const LocationPicker = React.memo(
     nowSelect: string;
     handleChange: (data: string) => void;
   }) => {
+    const pickerRef = useRef<RNPickerSelect | null>(null);
+    const pressPickerArea = () => {
+      if (pickerRef.current) {
+        // console.log(pickerRef.current.state);
+        pickerRef.current.togglePicker();
+      }
+    };
     return (
-      <View style={ST.picker}>
-        <RNPickerSelect
-          useNativeAndroidPickerStyle={false}
-          placeholder={{label: '검색대상 도시를 선택하세요', value: null}}
-          onValueChange={value => handleChange(value)}
-          items={
-            items
-              ? items?.map(it => {
-                  return {label: it, value: it};
-                })
-              : []
-          }>
-          <Typho type={'H5'} text={nowSelect} />
-        </RNPickerSelect>
-      </View>
+      <TouchableNativeFeedback onPress={() => pressPickerArea()}>
+        <View style={ST.picker}>
+          <RNPickerSelect
+            ref={r => (pickerRef.current = r)}
+            useNativeAndroidPickerStyle={false}
+            placeholder={{label: '검색대상 도시를 선택하세요', value: null}}
+            onValueChange={value => handleChange(value)}
+            style={{viewContainer: {padding: 100}}}
+            items={
+              items
+                ? items?.map(it => {
+                    return {label: it, value: it};
+                  })
+                : []
+            }>
+            <Typho type={'H5'} text={nowSelect} />
+          </RNPickerSelect>
+        </View>
+      </TouchableNativeFeedback>
     );
   },
 );
@@ -67,13 +85,17 @@ const ArticleFilter = () => {
 
   const getGuList = nowSi => {
     var matchIdx = locationState.origin_data.findIndex(it => it.si === nowSi);
+    if (nowSi === '전체') return ['전체'];
     if (matchIdx === -1) throw new Error('GU LIST ERROR :: IN ARTICLE FILTER');
     else {
+      var res_gu_list: Array<string> = ['전체'];
+
       var origin_gu_list: Array<string> = locationState.origin_data[
         matchIdx
       ]?.gu_list?.slice();
-      origin_gu_list.push('전체');
-      return origin_gu_list;
+
+      res_gu_list = res_gu_list.concat(origin_gu_list);
+      return res_gu_list;
     }
   };
 
@@ -123,7 +145,7 @@ const ArticleFilter = () => {
       <View style={ST.left_box}>
         <LocationPicker
           nowSelect={state.si}
-          items={locationState.si_list}
+          items={['전체'].concat(locationState.si_list)}
           handleChange={setSi}
         />
         <LocationPicker

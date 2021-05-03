@@ -21,6 +21,7 @@ import MediaListItem from '~/molecule/MediaListItem';
 // ATOMS
 import Typho from '~/Typho';
 import {useLoader} from '~/store/AppGlobalLoadingStore';
+import {toastAlert} from '~/util';
 
 const REQUIRED_COUNT = 10;
 
@@ -129,6 +130,7 @@ const ArticleFlatListController = React.memo(
           };
         }
         case 'ERROR_OCCURED': {
+          toastAlert('데이터를 불러오는 중 문제가 발생하였습니다');
           return {
             ...state,
             page: 1,
@@ -187,9 +189,7 @@ const ArticleFlatListController = React.memo(
           required_count: REQUIRED_COUNT,
         },
       );
-      if (state.page === 1) {
-        dispatchLoader({type: 'HIDE_LOADER'});
-      }
+      dispatchLoader({type: 'HIDE_LOADER'});
 
       if (res_data) {
         if (res_data.result === 'SUCCESS') {

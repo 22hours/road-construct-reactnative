@@ -408,11 +408,12 @@ const SECITON__RELREATED_CONTACT = React.memo(() => {
 });
 const SECTION__USER_ACTION = React.memo(
   ({article_id}: {article_id: number}) => {
-    const state = useArticleDetailStoreState('STARRED');
+    const starred: DATA_Type['starred'] = useArticleDetailStoreState('STARRED');
     const viewShot = useArticleDetailViewShot();
     const loadDispath = useLoader();
     const width = Dimensions.get('window').width;
     const navigation = useNavigation();
+
     const ST = StyleSheet.create({
       container: {
         backgroundColor: Color.DETAIL_SCENE.BOTTOM_TAB,
@@ -439,10 +440,13 @@ const SECTION__USER_ACTION = React.memo(
       },
     });
 
+    const [localState, setLocalState] = useState<boolean>(starred);
+
     const action_starred = async () => {
-      loadDispath({type: 'SHOW_LOADER'});
-      await setTimeout(() => loadDispath({type: 'HIDE_LOADER'}), 1500);
-      toastAlert('내 관심에 등록하였습니다');
+      toastAlert(
+        localState ? '내 관심에서 삭제하였습니다.' : '내 관심에 등록하였습니다',
+      );
+      setLocalState(!localState);
     };
 
     const action_shared = () => {
@@ -458,7 +462,7 @@ const SECTION__USER_ACTION = React.memo(
     return (
       <View style={ST.container}>
         <TouchableOpacity onPress={() => action_starred()} style={ST.itembox}>
-          <CustomIcon type={'STAR'} />
+          <CustomIcon type={localState ? 'BLUE_STAR' : 'STAR'} />
           <Typho type={'LABEL'} text={'내 관심'} extraStyle={ST.itemtext} />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => action_shared()} style={ST.itembox}>

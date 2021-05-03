@@ -16,7 +16,7 @@ let height = Dimensions.get('window').height;
 type Props = {};
 
 const GlobalLoader = (props: Props) => {
-  const {isLoading} = useLoaderState();
+  const {isLoading, text} = useLoaderState();
   return (
     <>
       {isLoading && (
@@ -25,7 +25,7 @@ const GlobalLoader = (props: Props) => {
             <ActivityIndicator color="white" />
             <Typho
               type={'H5'}
-              text={'잠시만 기다려 주세요'}
+              text={text ? text : '잠시만 기다려 주세요'}
               extraStyle={ST.loadingTitle}
             />
           </View>

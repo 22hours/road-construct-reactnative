@@ -1,5 +1,11 @@
 import React, {useState, useEffect, useContext} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  TouchableNativeFeedback,
+} from 'react-native';
 
 import Typho from '~/Typho';
 import {toastAlert} from '~/util';
@@ -13,7 +19,6 @@ import GlobalEnum from '~/GlobalEnum';
 type Props = {
   scene?: any;
   previous?: any;
-  navigation?: any;
   handleShare?: () => any;
   handleGotoAlarm?: () => any;
 };
@@ -27,14 +32,23 @@ const SceneHeader = ({handleShare = () => toastAlert('TODO')}: Props) => {
     <>
       <View style={[ST.container]}>
         <View style={ST.left_side}>
-          <FastImage
-            source={require('./../../images/logo.png')}
-            style={{
-              width: 30,
-              height: 30,
-              borderRadius: 5,
-            }}
-          />
+          <TouchableNativeFeedback
+            onPress={() => {
+              navigation.reset({
+                index: 0,
+                routes: [{name: GlobalEnum.Route.MAIN_SCENE}],
+              });
+            }}>
+            <FastImage
+              source={require('./../../images/logo.png')}
+              style={{
+                width: 30,
+                height: 30,
+                borderRadius: 5,
+              }}
+            />
+          </TouchableNativeFeedback>
+
           <Typho type={'H4'} text={'도로신설소식'} extraStyle={ST.buttonText} />
         </View>
         <View style={ST.button_container}>
