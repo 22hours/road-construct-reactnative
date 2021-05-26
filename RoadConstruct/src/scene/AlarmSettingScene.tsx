@@ -1,7 +1,6 @@
-import React, {useState, useEffect, useReducer, useCallback} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
-  Text,
   Switch,
   View,
   TouchableOpacity,
@@ -10,8 +9,8 @@ import {
   Dimensions,
   LayoutAnimation,
   UIManager,
+  ActivityIndicator,
 } from 'react-native';
-import {API_CALL} from '~/api';
 import Color from '~/Color';
 
 // ICONS
@@ -28,7 +27,6 @@ import {
   useAlarmSettingState,
 } from '~/store/AlarmSettingStore';
 import Typho from '~/Typho';
-import {toastAlert} from '~/util';
 
 ////////////////////////////////////////////////////
 //  GU
@@ -117,11 +115,15 @@ type siProps = {
   gu_list: Array<{gu: string; alarmed?: boolean}>;
 };
 const SiItem = ({si, gu_list, isAllAlaremd}: siProps) => {
+  useEffect(() => {
+    console.log(si, isAllAlaremd);
+  }, [isAllAlaremd]);
+
   const [isExpand, setIsExpand] = useState(false);
   const dispatch = useAlarmSettingDispatch();
   const handleToggleSi = () => {
     dispatch({
-      type: isAllAlaremd ? 'ADD_SI' : 'REMOVE_SI',
+      type: isAllAlaremd ? 'REMOVE_SI' : 'ADD_SI',
       data: {
         target_si: si,
         isAllAlaremd: isAllAlaremd,
@@ -222,7 +224,7 @@ const SI_ST = StyleSheet.create({
 ////////////////////////////////////////////////////
 const screenWidth = Dimensions.get('window').width;
 const AlarmSettingController = () => {
-  const {state, submitAction} = useAlarmSettingState();
+  const {state, isLoad, submitAction} = useAlarmSettingState();
   return (
     <>
       <SceneLayout isScrollAble={true}>
@@ -245,9 +247,17 @@ const AlarmSettingController = () => {
 
       <TouchableNativeFeedback
         style={P_ST.button_container}
-        onPress={() => submitAction()}>
-        <View style={P_ST.button}>
-          <Typho type={'H4'} text={'설정 완료'} extraStyle={P_ST.button_text} />
+        onPress={!isLoad ? () => submitAction() : () => {}}>
+        <View style={[P_ST.button, isLoad ? {} : {}]}>
+          {!isLoad ? (
+            <Typho
+              type={'H4'}
+              text={'설정 완료'}
+              extraStyle={P_ST.button_text}
+            />
+          ) : (
+            <ActivityIndicator size="large" color="white" />
+          )}
         </View>
       </TouchableNativeFeedback>
     </>
@@ -266,6 +276,7 @@ const P_ST = StyleSheet.create({
     backgroundColor: Color.COMMON.PRIMARY,
     paddingVertical: 10,
     borderRadius: 5,
+    height: 45,
   },
   button_text: {
     color: 'white',
@@ -283,7 +294,5 @@ const AlarmSettingScene = () => {
     </AlarmSettingProvider>
   );
 };
-
-const styles = StyleSheet.create({});
 
 export default AlarmSettingScene;
