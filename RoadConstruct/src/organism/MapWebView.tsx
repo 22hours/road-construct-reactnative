@@ -1,13 +1,5 @@
 import {api_types} from '@global_types';
 import React, {useState, useEffect, useRef, useCallback} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  TouchableOpacity,
-} from 'react-native';
 import {WebView, WebViewMessageEvent} from 'react-native-webview';
 import ArticleMapDrawer from '~/molecule/ArticleMapDrawer';
 import MapPannel from '~/molecule/MapPannel';
@@ -61,8 +53,8 @@ const MapWebView = ({markerList}: Props) => {
       }
       case 'TOGGLE_CADASTRAL': {
         res_value = {type: action.type};
-        callBackAction = () =>
-          setIsCadastralLayerVisible(!isCadastralLayerVisible);
+        setIsCadastralLayerVisible(!isCadastralLayerVisible);
+
         break;
       }
       case 'MOVE_CURRENT_LOCATION': {
@@ -114,7 +106,7 @@ const MapWebView = ({markerList}: Props) => {
   // PROPS DISPATCH
   const toggleCadastralLayerVisible = useCallback(() => {
     sendPostMessageToWeb({type: 'TOGGLE_CADASTRAL'});
-  }, []);
+  }, [isCadastralLayerVisible]);
   const initOverlayState = useCallback(() => {
     setOverlayState({
       article_id: null,
@@ -169,7 +161,7 @@ const MemoizedWebview = React.memo(
         ref={webViewRef}
         onMessage={handleOnMessage}
         source={{
-          uri: 'https://64a73af10800.ngrok.io',
+          uri: 'https://road-construction-66295.web.app/',
         }}
       />
     );

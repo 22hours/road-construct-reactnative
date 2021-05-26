@@ -1,13 +1,5 @@
-import React, {useState, useEffect, useContext, useCallback} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-  TouchableOpacity,
-} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {StyleSheet, ScrollView, View, TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 
 // STORE
@@ -18,29 +10,28 @@ import SceneLayout from '~/layout/SceneLayout';
 import GlobalEnum from '~/GlobalEnum';
 import Typho from '~/Typho';
 import Color from '~/Color';
-import FastImage from 'react-native-fast-image';
 import CustomIcon from '~/atom/CustomIcon';
 import {API_CALL} from '~/api';
 import {toastAlert} from '~/util';
 type Props = {};
 
 const SiBox = ({si, isNew, onPress}) => {
+  const newTextStyle = isNew
+    ? {color: Color.MAIN_SCENE.NEW_TEXT}
+    : {color: Color.MAIN_SCENE.ITEM_BACK};
   return (
     <TouchableOpacity onPress={() => onPress(si)} style={ST.sibox_container}>
-      {isNew && (
-        <Typho
-          type={'SECTION_HEADER'}
-          text={'NEW'}
-          extraStyle={[ST.sibox_new_text, {fontFamily: 'CooperBlack'}]}
-        />
-      )}
-
+      <Typho
+        type={'SECTION_HEADER'}
+        text={'NEW'}
+        extraStyle={[ST.sibox_new_text, newTextStyle]}
+      />
       <Typho type={'H5'} text={si} extraStyle={ST.sibox_si_text} />
     </TouchableOpacity>
   );
 };
 
-const MainScene = (props: Props) => {
+const MainScene = () => {
   const navigation = useNavigation();
   const locationData = useLocationData();
   const [newList, setNewList] = useState<Array<string>>([]);
@@ -63,38 +54,66 @@ const MainScene = (props: Props) => {
   };
 
   return (
-    <SceneLayout isScrollAble={true}>
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          marginBottom: 20,
-          marginTop: 10,
-          paddingHorizontal: 5,
-        }}>
-        <Typho type={'H4'} text={'지역 선택'} extraStyle={{marginRight: 10}} />
-        <CustomIcon type={'CHECK'} width={17} height={17} />
-      </View>
-      <View
-        style={{
-          flexDirection: 'row',
-          flexWrap: 'wrap',
-        }}>
-        {locationData?.si_list?.map(it => {
-          var isNew = false;
-          if (newList) {
-            isNew = newList?.indexOf(it) === -1 ? false : true;
-          }
-          return (
-            <SiBox isNew={isNew} key={it} si={it} onPress={handleClickItem} />
-          );
-        })}
+    <SceneLayout>
+      <View style={ST.container}>
+        <View style={ST.header}>
+          <Typho
+            type={'H4'}
+            text={'지역 선택'}
+            extraStyle={{marginRight: 10}}
+          />
+          <CustomIcon type={'CHECK'} width={17} height={17} />
+        </View>
+        <ScrollView>
+          <View style={ST.body}>
+            {locationData?.si_list?.map(it => {
+              var isNew = false;
+              if (newList) {
+                isNew = newList?.indexOf(it) === -1 ? false : true;
+              }
+              return (
+                <SiBox
+                  isNew={isNew}
+                  key={it}
+                  si={it}
+                  onPress={handleClickItem}
+                />
+              );
+            })}
+          </View>
+        </ScrollView>
+
+        <View style={ST.footer}>
+          <Typho
+            type={'CAPTION'}
+            text={
+              '도로 신설 소식의 모든 정보는 지자체, 정부기관 및 언론사에서 공개한 정보를 기반으로 제공됨을 알려 드립니다.'
+            }
+          />
+        </View>
       </View>
     </SceneLayout>
   );
 };
 
 const ST = StyleSheet.create({
+  container: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+    marginTop: 10,
+    paddingHorizontal: 5,
+  },
+  body: {
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
   sibox_container: {
     width: '30%',
     marginHorizontal: '1.5%',
@@ -102,22 +121,26 @@ const ST = StyleSheet.create({
     borderRadius: 5,
     height: 60,
 
-    paddingVertical: 10,
+    paddingVertical: 5,
     paddingHorizontal: 20,
     marginBottom: 15,
 
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    // aspectRatio: 1,
   },
   sibox_new_text: {
-    color: Color.MAIN_SCENE.NEW_TEXT,
-    fontSize: 10,
+    fontSize: 8,
+    fontFamily: 'CooperBlack',
   },
   sibox_si_text: {
     color: 'black',
   },
+  footer: {
+    paddingHorizontal: 10,
+    paddingBottom: 10,
+  },
+  footer_text: {},
 });
 
 export default MainScene;

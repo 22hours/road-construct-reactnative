@@ -31,10 +31,8 @@ const AppGlobalLoadingDispatchContext = createContext<ContextDispatch | null>(
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case 'SHOW_LOADER':
-      console.log('SHOW');
       return {isLoading: true, text: action?.text};
     case 'HIDE_LOADER':
-      console.log('HIDE');
       return {isLoading: false};
     default:
       throw new Error('GLOBAL LOADING STROE ERROR OCCURED!');

@@ -6,7 +6,6 @@ import React, {
   useContext,
 } from 'react';
 
-import {useAsync} from '~/Hooks';
 import {API_CALL} from '~/api';
 import {useLoader} from './AppGlobalLoadingStore';
 import SplashScreen from 'react-native-splash-screen';
@@ -18,7 +17,7 @@ import {Alert, BackHandler} from 'react-native';
 type ContextState = {
   alarmed_data: Array<{
     si: string;
-    gu_list: Array<{gu: string; alarmed?: Boolean}>;
+    gu_list: Array<{gu: string; alarmed?: boolean}>;
   }>;
   origin_data: Array<{
     si: string;

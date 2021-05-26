@@ -1,7 +1,7 @@
-import axios, {AxiosResponse} from 'axios';
+import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {toastAlert} from './util';
-import {api_types, meta_types} from '@global_types';
+import {meta_types} from '@global_types';
 
 export const DOMAIN = 'https://3543d13b2b1d.ngrok.io';
 
@@ -68,7 +68,7 @@ const domain_reducer = (domain: params['domain']) => {
       return 'https://github.com';
     }
     case 'MAIN_HOST': {
-      return 'https://b4da96832795.ngrok.io';
+      return 'https://396a943f4594.ngrok.io';
     }
   }
 };
@@ -146,15 +146,18 @@ export const API_CALL = async (
   url_query?: params['url_query'],
   data?: params['data'],
 ): Promise<{result: 'SUCCESS'; data: any} | {result: 'ERROR'; msg: any}> => {
-  console.log('API_CALLED : ', data);
   var localData = await AsyncStorage.getItem('@auth');
   var header = localData ? JSON.parse(localData).access_token : undefined;
 
-  var request_URL = `${domain_reducer(domain)}${endpoint_reducer(
-    url,
-    url_query,
-  )}`;
-  // console.log(request_URL);
+  var requestDOMAIN = domain_reducer(domain);
+  var requestEP = endpoint_reducer(url, url_query);
+
+  var request_URL = `${requestDOMAIN}${requestEP}`;
+
+  console.debug();
+  console.debug('API CALLED');
+  console.debug(`EP : ${requestEP}`);
+  console.debug(`DATA : ${data === undefined ? '' : data}`);
 
   var axios_option = {
     method: method,

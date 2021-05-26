@@ -57,7 +57,9 @@ const SceneHeader = ({handleShare = () => toastAlert('TODO')}: Props) => {
             onPress={() => handleGoToAlarm()}>
             <CustomIcon type={'BELL'} />
           </TouchableOpacity>
-          <TouchableOpacity style={ST.icon_buton} onPress={() => handleShare()}>
+          <TouchableOpacity
+            style={[ST.icon_buton]}
+            onPress={() => handleShare()}>
             <CustomIcon type={'SHARE'} />
           </TouchableOpacity>
         </View>
@@ -89,8 +91,6 @@ const ST = StyleSheet.create({
   },
 
   icon_buton: {
-    // borderWidth: 1,
-    // borderColor: 'red',
     padding: 10,
   },
   icon: {

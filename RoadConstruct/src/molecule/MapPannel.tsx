@@ -1,12 +1,5 @@
-import React, {useState, useEffect, useCallback} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  TouchableOpacity,
-} from 'react-native';
+import React, {useCallback} from 'react';
+import {StyleSheet, View, TouchableOpacity} from 'react-native';
 import Color from '~/Color';
 import Typho from '~/Typho';
 

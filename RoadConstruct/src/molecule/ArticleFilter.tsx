@@ -30,6 +30,7 @@ import {
   useArticleListStoreDispatch,
   useArticleListStoreState,
 } from '~/store/ArticleListStore';
+import {API_CALL} from '~/api';
 
 const LocationPicker = React.memo(
   ({

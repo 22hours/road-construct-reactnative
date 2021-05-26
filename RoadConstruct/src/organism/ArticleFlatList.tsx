@@ -1,12 +1,5 @@
-import React, {useState, useEffect, useCallback, useReducer} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  FlatList,
-} from 'react-native';
+import React, {useEffect, useReducer} from 'react';
+import {View, FlatList} from 'react-native';
 
 import {api_types, meta_types} from '@global_types';
 import {API_CALL} from '~/api';
@@ -187,6 +180,8 @@ const ArticleFlatListController = React.memo(
         {
           page: state.page,
           required_count: REQUIRED_COUNT,
+          si: pageState.filter.si,
+          gu: pageState.filter.gu,
         },
       );
       dispatchLoader({type: 'HIDE_LOADER'});
@@ -241,7 +236,5 @@ const ArticleFlatList = () => {
 
   return <ArticleFlatListController pageState={pageState} />;
 };
-
-const styles = StyleSheet.create({});
 
 export default ArticleFlatList;
