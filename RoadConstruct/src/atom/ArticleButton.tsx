@@ -1,37 +1,11 @@
-import React, {useState, useEffect} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-  Text,
-  StatusBar,
-} from 'react-native';
+import React from 'react';
+import {StyleSheet, TouchableOpacity, View, Text} from 'react-native';
 import Color from '~/Color';
 import Typho from '~/Typho';
-
-// Icons
-import Icon_Ionicons from 'react-native-vector-icons/Ionicons';
-import Icon_MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Icon_FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 type Props = {
   text: string;
   onPress: () => void;
-};
-
-const RenderIconBody = ({text, onPress}: Props) => {
-  return (
-    <TouchableOpacity onPress={() => onPress()} style={ST.section_button}>
-      <View style={ST.section_button__left}>
-        <Typho
-          type={'LABEL'}
-          text={text}
-          extraStyle={ST.section_button__text}
-        />
-      </View>
-    </TouchableOpacity>
-  );
 };
 
 const ArticleButton = (props: Props) => {

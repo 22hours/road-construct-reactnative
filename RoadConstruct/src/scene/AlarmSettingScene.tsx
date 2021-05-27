@@ -115,10 +115,6 @@ type siProps = {
   gu_list: Array<{gu: string; alarmed?: boolean}>;
 };
 const SiItem = ({si, gu_list, isAllAlaremd}: siProps) => {
-  useEffect(() => {
-    console.log(si, isAllAlaremd);
-  }, [isAllAlaremd]);
-
   const [isExpand, setIsExpand] = useState(false);
   const dispatch = useAlarmSettingDispatch();
   const handleToggleSi = () => {

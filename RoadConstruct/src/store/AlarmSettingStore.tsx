@@ -1,4 +1,3 @@
-import {useNavigation} from '@react-navigation/native';
 import axios from 'axios';
 import React, {
   useEffect,
@@ -11,7 +10,6 @@ import {API_CALL} from '~/api';
 import {useLoader} from '~/store/AppGlobalLoadingStore';
 import {useLocationData} from '~/store/AppGlobalStore';
 import {toastAlert} from '~/util';
-import {useAuthStore} from './AuthStore';
 let axiosSource = axios.CancelToken.source();
 
 // ELEMENT TYPES
@@ -143,7 +141,6 @@ export const AlarmSettingProvider = ({children}) => {
         throw new Error('ALARM SETTING REUCDER ERROR OCCURED');
     }
   };
-  const naviagtion = useNavigation();
   const location = useLocationData();
   const [state, dispatch] = useReducer(reducer, {
     isLoad: false,

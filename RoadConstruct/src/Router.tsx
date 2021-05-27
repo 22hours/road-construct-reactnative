@@ -1,17 +1,9 @@
-import React, {useState, useEffect, useContext} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  Alert,
-  View,
-  Text,
-  TouchableOpacity,
-} from 'react-native';
-import {NavigationContainer, useNavigation} from '@react-navigation/native';
+import React from 'react';
+import {StyleSheet} from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
 import {
   createStackNavigator,
   CardStyleInterpolators,
-  TransitionSpecs,
 } from '@react-navigation/stack';
 
 // LAYOUT
@@ -106,7 +98,5 @@ const Router = () => {
     </>
   );
 };
-
-const styles = StyleSheet.create({});
 
 export default Router;

@@ -1,17 +1,9 @@
-import React, {
-  useState,
-  useEffect,
-  useContext,
-  useRef,
-  useCallback,
-} from 'react';
+import React, {useState} from 'react';
 import {
-  SafeAreaView,
   StyleSheet,
   TouchableOpacity,
   View,
   Text,
-  StatusBar,
   Linking,
   Dimensions,
 } from 'react-native';
@@ -33,9 +25,6 @@ import SceneLayout from '~/layout/SceneLayout';
 import Color from '~/Color';
 import Typho from '~/Typho';
 
-// ORGANISM
-import ViewShotArea from '~/organism/ViewShotArea';
-
 // ATOMS
 import ArticleButton from '~/atom/ArticleButton';
 import AddressText from '~/molecule/AddressText';
@@ -47,11 +36,11 @@ import {useNavigation} from '@react-navigation/native';
 
 // ICONS
 import Icon_AntDesign from 'react-native-vector-icons/AntDesign';
-import {useLoader} from '~/store/AppGlobalLoadingStore';
 import {
   useArticleDetailViewShot,
   ViewShotProvider,
 } from '~/store/ViewShotStore';
+import {API_CALL} from '~/api';
 
 type DATA_Type = api_types.api_response__article_detail;
 
@@ -104,7 +93,6 @@ const SECITON__TOPIC_CONTENT = React.memo(() => {
   );
 
   const handlePressPDF = () => {
-    console.log(state);
     var pdf_length = state.article_file_list?.length;
     if (pdf_length >= 1) {
       var origin_pdf_file_url = state.article_file_list[0].url;
@@ -217,9 +205,6 @@ const SECITON__RELATED_ADDRESS = React.memo(() => {
     },
   );
   const RenderImageItem = React.memo(({it}: {it: any}) => {
-    useEffect(() => {
-      console.log('IMAGE');
-    });
     return (
       <View>
         <Typho type={'LABEL'} text={it.title} />
@@ -235,9 +220,6 @@ const SECITON__RELATED_ADDRESS = React.memo(() => {
     }) => {
       const [isCollapse, setIsCollapse] = useState<Boolean>(false);
       const toggleIsCollapse = () => setIsCollapse(!isCollapse);
-      useEffect(() => {
-        console.log('RENDER IMAGE');
-      });
 
       return (
         <>
@@ -410,7 +392,6 @@ const SECTION__USER_ACTION = React.memo(
   ({article_id}: {article_id: number}) => {
     const starred: DATA_Type['starred'] = useArticleDetailStoreState('STARRED');
     const viewShot = useArticleDetailViewShot();
-    const loadDispath = useLoader();
     const width = Dimensions.get('window').width;
     const navigation = useNavigation();
 
@@ -443,10 +424,27 @@ const SECTION__USER_ACTION = React.memo(
     const [localState, setLocalState] = useState<boolean>(starred);
 
     const action_starred = async () => {
-      toastAlert(
-        localState ? '내 관심에서 삭제하였습니다.' : '내 관심에 등록하였습니다',
+      const rest_data = await API_CALL(
+        'put',
+        'MAIN_HOST',
+        'STAR',
+        {article_id: article_id, flag: !localState},
+        undefined,
+        true,
       );
-      setLocalState(!localState);
+      if (rest_data) {
+        if (rest_data.result === 'SUCCESS') {
+          toastAlert(
+            localState
+              ? '내 관심에서 삭제하였습니다.'
+              : '내 관심에 등록하였습니다',
+          );
+          setLocalState(!localState);
+        } else {
+          const msg = rest_data.msg;
+          toastAlert(msg);
+        }
+      }
     };
 
     const action_shared = () => {

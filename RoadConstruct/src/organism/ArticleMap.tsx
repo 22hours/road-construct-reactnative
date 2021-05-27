@@ -1,22 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ImageBackground,
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-} from 'react-native';
-import NaverMapView, {
-  Coord,
-  Marker,
-  Polyline,
-  Polygon,
-} from 'react-native-nmap';
-import Geolocation from 'react-native-geolocation-service';
-import Typho from '~/Typho';
-import Color from '~/Color';
+import {SafeAreaView, StyleSheet, View, Text} from 'react-native';
+import NaverMapView, {Marker} from 'react-native-nmap';
+
 import MapPannel from '~/molecule/MapPannel';
 
 // Basic = 0,

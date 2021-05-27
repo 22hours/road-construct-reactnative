@@ -1,10 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import {
-  SafeAreaView,
   StyleSheet,
   TouchableNativeFeedback,
   View,
-  Text,
   TouchableOpacity,
 } from 'react-native';
 import Modal from 'react-native-modal';
@@ -52,7 +50,7 @@ const PdfDetailScene = ({route}: Props) => {
         url: uri,
         type: 'pdf',
       };
-      const result = await Share.open(options);
+      await Share.open(options);
     } catch (e) {
       console.log('😻😻😻 snapshot failed', e);
     }

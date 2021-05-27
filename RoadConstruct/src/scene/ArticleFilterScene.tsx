@@ -1,21 +1,10 @@
-import React, {useState, useEffect} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-} from 'react-native';
+import React from 'react';
 
 // LAYOUT
 import SceneLayout from '~/layout/SceneLayout';
-type Props = {};
 
-const ArticleFilterScene = (props: Props) => {
+const ArticleFilterScene = () => {
   return <SceneLayout></SceneLayout>;
 };
-
-const styles = StyleSheet.create({});
 
 export default ArticleFilterScene;

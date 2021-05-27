@@ -1,5 +1,4 @@
 import React, {
-  useState,
   useEffect,
   Dispatch,
   createContext,
@@ -76,6 +75,8 @@ export const ArticleDetailProvider = ({
       'MAIN_HOST',
       'ARTICLE DETAIL',
       article_id,
+      undefined,
+      true,
     );
     loadDispatch({type: 'HIDE_LOADER'});
 

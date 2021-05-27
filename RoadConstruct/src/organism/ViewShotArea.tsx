@@ -1,12 +1,5 @@
-import React, {useState, useEffect, useRef} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-} from 'react-native';
+import React, {useEffect, useRef} from 'react';
+import {StyleSheet, View} from 'react-native';
 import ViewShot from 'react-native-view-shot';
 import Share from 'react-native-share';
 

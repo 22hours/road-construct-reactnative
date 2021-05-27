@@ -1,22 +1,19 @@
 import {api_types} from '@global_types';
-import React, {useState, useEffect} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  TouchableOpacity,
-} from 'react-native';
+import React from 'react';
+import {StyleSheet, View, TouchableOpacity, Linking} from 'react-native';
 import FastImage from 'react-native-fast-image';
 import Color from '~/Color';
+import {useTime} from '~/Hooks';
 import Typho from '~/Typho';
 
 type Props = api_types.media_list_item;
 
 const MediaListItem = (props: Props) => {
+  const time = useTime(props.create_date);
   return (
-    <TouchableOpacity style={ST.container}>
+    <TouchableOpacity
+      style={ST.container}
+      onPress={() => Linking.openURL(props.media_link)}>
       <View style={ST.left}>
         <Typho type={'H4'} text={props.title} extraStyle={{marginBottom: 10}} />
         <View style={{flexDirection: 'row'}}>
@@ -25,7 +22,7 @@ const MediaListItem = (props: Props) => {
             text={props.author}
             extraStyle={{marginRight: 10}}
           />
-          <Typho type={'CAPTION'} text={props.create_date} />
+          <Typho type={'CAPTION'} text={time.toString()} />
         </View>
       </View>
       <View style={ST.right}>

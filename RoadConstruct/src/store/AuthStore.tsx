@@ -80,6 +80,7 @@ export const AuthProvider = ({children}) => {
   };
 
   useEffect(() => {
+    // AsyncStorage.removeItem('ID');
     isAuthInfoExist();
   }, []);
   return (

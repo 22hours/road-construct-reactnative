@@ -1,14 +1,6 @@
 import {api_types} from '@global_types';
 import React, {useState, useEffect, useMemo} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-  TouchableNativeFeedback,
-} from 'react-native';
+import {StyleSheet, View, TouchableNativeFeedback} from 'react-native';
 import {API_CALL} from '~/api';
 import Color from '~/Color';
 import Typho from '~/Typho';
@@ -42,8 +34,9 @@ const ArticleMapDrawer = React.memo(
           'get',
           'MAIN_HOST',
           'ARTICLE_DETAIL_MARKER',
+          article_id,
           undefined,
-          {article_id: article_id},
+          true,
         );
 
         if (rest_data) {

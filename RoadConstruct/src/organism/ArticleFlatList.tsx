@@ -5,7 +5,10 @@ import {api_types, meta_types} from '@global_types';
 import {API_CALL} from '~/api';
 
 // STORE
-import {useArticleListStoreState} from '~/store/ArticleListStore';
+import {
+  useArticleListStoreDispatch,
+  useArticleListStoreState,
+} from '~/store/ArticleListStore';
 
 // MOLEUCULES
 import ArticleListItem from '~/molecule/ArticleListItem';
@@ -15,6 +18,7 @@ import MediaListItem from '~/molecule/MediaListItem';
 import Typho from '~/Typho';
 import {useLoader} from '~/store/AppGlobalLoadingStore';
 import {toastAlert} from '~/util';
+import {useNavigation} from '@react-navigation/native';
 
 const REQUIRED_COUNT = 10;
 
@@ -70,7 +74,6 @@ const MemoizedMediaFlatList = React.memo(
     );
   },
 );
-
 const ArticleFlatListController = React.memo(
   ({
     pageState,
@@ -116,7 +119,7 @@ const ArticleFlatListController = React.memo(
         case 'INIT_STATE': {
           return {
             nowTab: action.data,
-            page: 1,
+            page: 0,
             data: [],
             isEnd: false,
             isInited: true,
@@ -126,7 +129,7 @@ const ArticleFlatListController = React.memo(
           toastAlert('데이터를 불러오는 중 문제가 발생하였습니다');
           return {
             ...state,
-            page: 1,
+            page: 0,
             data: [],
             isEnd: true,
             isInited: false,
@@ -183,6 +186,7 @@ const ArticleFlatListController = React.memo(
           si: pageState.filter.si,
           gu: pageState.filter.gu,
         },
+        pageState.nowTab === '내 관심' ? true : false,
       );
       dispatchLoader({type: 'HIDE_LOADER'});
 
@@ -233,7 +237,14 @@ const ArticleFlatListController = React.memo(
 
 const ArticleFlatList = () => {
   const pageState = useArticleListStoreState('FLATLIST');
-
+  const pageDispatch = useArticleListStoreDispatch();
+  const navigation = useNavigation();
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      pageDispatch({type: 'SET_FILTER', data: pageState.filter});
+    });
+    return unsubscribe;
+  }, [navigation]);
   return <ArticleFlatListController pageState={pageState} />;
 };
 

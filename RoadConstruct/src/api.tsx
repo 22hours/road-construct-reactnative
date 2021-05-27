@@ -88,7 +88,8 @@ type params_url =
   | 'ARTICLE DETAIL'
   | 'ARTICLE_DETAIL_MARKER'
   | 'ARTICLE NEWS LIST'
-  | 'USER_ALARMED_LOCATION_LIST';
+  | 'USER_ALARMED_LOCATION_LIST'
+  | 'STAR';
 
 const endpoint_reducer = (
   url: params['url'],
@@ -119,7 +120,7 @@ const endpoint_reducer = (
       return 'address';
     }
     case 'ARTICLE_DETAIL_MARKER': {
-      return 'article_marker_detail';
+      return `article/summary/${url_query}`;
     }
     case 'ARTICLE NEWS LIST': {
       return `article/media/${url_query}`;
@@ -128,10 +129,14 @@ const endpoint_reducer = (
       return 'media';
     }
     case 'STARRED LIST': {
-      return 'starred_list';
+      return 'user/article';
     }
     case 'USER_ALARMED_LOCATION_LIST': {
       return 'user/location';
+    }
+    case 'STAR': {
+      const {article_id, flag} = url_query;
+      return `article/star/${article_id}/${flag}`;
     }
     default:
       throw new Error('API EP REDUCER ERROR');

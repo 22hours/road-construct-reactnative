@@ -61,6 +61,7 @@ declare module '@global_types' {
       author: string;
       thumbnail_uri: string;
       create_date: string;
+      media_link: string;
     };
     type api_response__media_list = Array<media_list_item>;
 

@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from 'react';
-import {SafeAreaView, StyleSheet, Text} from 'react-native';
+import React from 'react';
+import {StyleSheet} from 'react-native';
 // LAYOUT
 import SceneHeader from '~/layout/SceneHeader';
 import SceneLayout from '~/layout/SceneLayout';

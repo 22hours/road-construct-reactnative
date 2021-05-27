@@ -5,14 +5,18 @@ import ArticleMapDrawer from '~/molecule/ArticleMapDrawer';
 import MapPannel from '~/molecule/MapPannel';
 import {useLoader} from '~/store/AppGlobalLoadingStore';
 import {toastAlert} from '~/util';
-
+type position = {
+  latitude: number;
+  longitude: number;
+};
 type Props = {
   markerList: Array<api_types.article_marker>;
+  location: position;
 };
 
 type mapType = 'normal' | 'hybrid' | 'terrain';
 
-const MapWebView = ({markerList}: Props) => {
+const MapWebView = ({markerList, location}: Props) => {
   const [mapType, setMapType] = useState<mapType>('normal');
   const [
     isCadastralLayerVisible,
@@ -58,7 +62,7 @@ const MapWebView = ({markerList}: Props) => {
         break;
       }
       case 'MOVE_CURRENT_LOCATION': {
-        sendPostMessageToWeb({type: 'MOVE_CURRENT_LOCATION'});
+        res_value = {type: 'MOVE_CURRENT_LOCATION', data: location};
         break;
       }
       default:
@@ -80,6 +84,7 @@ const MapWebView = ({markerList}: Props) => {
     switch (action.type) {
       case 'MAP_LOAD_END': {
         loaderDispatch({type: 'HIDE_LOADER'});
+        sendPostMessageToWeb({type: 'MOVE_CURRENT_LOCATION'});
         sendPostMessageToWeb({type: 'LOAD_MARKERS', data: markerList});
         break;
       }
@@ -137,6 +142,9 @@ const MapWebView = ({markerList}: Props) => {
       />
       <MapPannel
         mapType={mapType}
+        handleGpsButton={() =>
+          sendPostMessageToWeb({type: 'MOVE_CURRENT_LOCATION'})
+        }
         setMapType={(type: mapType) =>
           sendPostMessageToWeb({type: 'SET_MAP_TYPE', data: type})
         }
@@ -161,7 +169,7 @@ const MemoizedWebview = React.memo(
         ref={webViewRef}
         onMessage={handleOnMessage}
         source={{
-          uri: 'https://road-construction-66295.web.app/',
+          uri: 'https://road-construction-66295.web.app',
         }}
       />
     );

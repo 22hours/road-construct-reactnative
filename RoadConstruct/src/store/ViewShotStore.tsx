@@ -1,12 +1,4 @@
-import React, {
-  useState,
-  useRef,
-  useEffect,
-  Dispatch,
-  createContext,
-  useReducer,
-  useContext,
-} from 'react';
+import React, {useRef, useEffect, useContext} from 'react';
 import {View} from 'react-native';
 import ViewShot from 'react-native-view-shot';
 import Share from 'react-native-share';
@@ -64,6 +56,8 @@ export const ViewShotProvider = ({children}) => {
 
 export const useArticleDetailViewShot = () => {
   const state = useContext(ViewShotContext);
-  if (!state) throw new Error('Cannot find ViewShotProvider');
+  if (!state) {
+    throw new Error('Cannot find ViewShotProvider');
+  }
   return state;
 };

@@ -1,11 +1,4 @@
-import React, {
-  useState,
-  useEffect,
-  Dispatch,
-  createContext,
-  useReducer,
-  useContext,
-} from 'react';
+import React, {Dispatch, createContext, useReducer, useContext} from 'react';
 
 // ELEMENT TYPES
 

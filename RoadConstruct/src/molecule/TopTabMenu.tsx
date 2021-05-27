@@ -1,19 +1,12 @@
-import React, {useState, useEffect, useReducer, useCallback} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  TouchableOpacity,
-} from 'react-native';
+import React, {useCallback} from 'react';
+import {StyleSheet, View, TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 
 import Color from '~/Color';
 import Typho from '~/Typho';
 
 // GLOBAL CONFIGS
-import {api_types, meta_types} from '@global_types';
+import {meta_types} from '@global_types';
 import GlobalEnum from '~/GlobalEnum';
 import {
   useArticleListStoreDispatch,
@@ -42,6 +35,7 @@ const TopTabMenu = () => {
       'ARTICLE COUNT',
       undefined,
       pageState.filter,
+      true,
     );
   };
 
@@ -50,7 +44,7 @@ const TopTabMenu = () => {
   const switchTabCount = (kor_tab_name: Select) => {
     switch (kor_tab_name) {
       case '지자체':
-        return value?.local_count | 0;
+        return value?.article_count | 0;
       case '언론':
         return value?.media_count | 0;
       case '내 관심':

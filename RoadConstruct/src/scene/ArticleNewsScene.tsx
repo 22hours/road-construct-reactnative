@@ -1,15 +1,7 @@
 import {api_types} from '@global_types';
 import {useNavigation} from '@react-navigation/native';
 import React, {useState, useEffect} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-  Alert,
-} from 'react-native';
+import {StyleSheet, Alert} from 'react-native';
 import {API_CALL} from '~/api';
 
 // LAYOUT
@@ -33,8 +25,7 @@ const ArticleNewsScene = ({route}: Props) => {
       'get',
       'MAIN_HOST',
       'ARTICLE NEWS LIST',
-      undefined,
-      {article_id: article_id},
+      article_id,
     );
     loaderDispatch({type: 'HIDE_LOADER'});
 
@@ -56,7 +47,7 @@ const ArticleNewsScene = ({route}: Props) => {
   }, [article_id]);
 
   return (
-    <SceneLayout>
+    <SceneLayout isScrollAble={true}>
       <>
         <Typho type={'H4'} text={'관련 기사'} extraStyle={{marginBottom: 20}} />
         {state.length >= 1 &&

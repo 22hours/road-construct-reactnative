@@ -1,6 +1,5 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React from 'react';
 import {StyleSheet, View, TouchableOpacity} from 'react-native';
-import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 
 import Typho from '~/Typho';
 import Color from '~/Color';
@@ -19,6 +18,16 @@ type ItemProps = api_types.article_list_item;
 // });
 const ArticleListItem = React.memo((props: ItemProps) => {
   const navigation = useNavigation();
+
+  console.log(props.date);
+  var date = new Date(props.date);
+  console.log(date);
+
+  var res_date = `${date.getFullYear()}.${
+    date.getMonth() + 1
+  }.${date.getDate()}`;
+  console.log(res_date);
+
   return (
     <View style={ST.container}>
       <TouchableOpacity
@@ -31,7 +40,7 @@ const ArticleListItem = React.memo((props: ItemProps) => {
           <Typho type={'H4'} text={props.title} />
           <Typho
             type={'LABEL'}
-            text={props.date?.toString()}
+            text={`\( ${res_date?.toString()}\ )`}
             extraStyle={ST.dateBox}
           />
         </View>
@@ -65,7 +74,8 @@ const ST = StyleSheet.create({
   dateBox: {
     color: 'white',
     backgroundColor: Color.COMMON.PRIMARY,
-    paddingHorizontal: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 2,
     marginLeft: 10,
     borderRadius: 5,
   },

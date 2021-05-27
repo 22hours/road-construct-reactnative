@@ -1,7 +1,6 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   TouchableOpacity,
   TouchableNativeFeedback,
@@ -10,7 +9,6 @@ import {
 import Typho from '~/Typho';
 import {toastAlert} from '~/util';
 
-import Icon_FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FastImage from 'react-native-fast-image';
 import CustomIcon from '~/atom/CustomIcon';
 import {useNavigation} from '@react-navigation/native';

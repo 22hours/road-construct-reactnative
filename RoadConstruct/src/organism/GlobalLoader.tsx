@@ -1,11 +1,5 @@
-import React, {useState, useEffect} from 'react';
-import {
-  ActivityIndicator,
-  StyleSheet,
-  Text,
-  View,
-  Dimensions,
-} from 'react-native';
+import React from 'react';
+import {ActivityIndicator, StyleSheet, View, Dimensions} from 'react-native';
 
 import {useLoaderState} from '~/store/AppGlobalLoadingStore';
 import Typho from '~/Typho';
@@ -15,7 +9,7 @@ let height = Dimensions.get('window').height;
 
 type Props = {};
 
-const GlobalLoader = (props: Props) => {
+const GlobalLoader = () => {
   const {isLoading, text} = useLoaderState();
   return (
     <>

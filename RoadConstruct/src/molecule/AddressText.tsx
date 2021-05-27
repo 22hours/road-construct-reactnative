@@ -1,14 +1,5 @@
-import React, {useState, useEffect, useRef} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-  TouchableOpacity,
-  Linking,
-} from 'react-native';
+import React, {useState, useRef} from 'react';
+import {StyleSheet, View, TouchableOpacity, Linking} from 'react-native';
 import Popover from 'react-native-popover-view';
 import Share from 'react-native-share';
 import Clipboard from '@react-native-clipboard/clipboard';
@@ -30,7 +21,7 @@ const AddressText = ({label, value}: Props) => {
   const touchable = useRef<any>();
   const [showPopover, setShowPopover] = useState(false);
 
-  const dispatch = async (type: string, param?: any) => {
+  const dispatch = async (type: string) => {
     switch (type) {
       case 'MAP': {
         const deeplink = `nmap://search?query=${value}&appname=com.roadconstruct`;

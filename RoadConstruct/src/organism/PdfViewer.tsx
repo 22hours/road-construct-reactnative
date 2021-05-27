@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import {StyleSheet, View, Dimensions} from 'react-native';
 import Pdf from 'react-native-pdf';
 

@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from 'react';
-import {Image, ImageStyle, StyleSheet} from 'react-native';
+import React from 'react';
+import {StyleSheet} from 'react-native';
 import FastImage from 'react-native-fast-image';
 
 type Props = {

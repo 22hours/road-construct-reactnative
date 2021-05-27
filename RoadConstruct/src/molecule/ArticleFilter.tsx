@@ -1,21 +1,11 @@
-import React, {
-  useState,
-  useEffect,
-  useReducer,
-  useCallback,
-  useRef,
-} from 'react';
+import React, {useEffect, useReducer, useCallback, useRef} from 'react';
 import {
-  SafeAreaView,
   StyleSheet,
-  ScrollView,
   View,
-  Text,
   TouchableOpacity,
   TouchableNativeFeedback,
 } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
-import {meta_types} from '@global_types';
 
 // GLOBAL STORE
 import {useLocationData} from '~/store/AppGlobalStore';
@@ -24,13 +14,11 @@ import {useLocationData} from '~/store/AppGlobalStore';
 import Typho from '~/Typho';
 
 // ICONS
-import Icon_FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Color from '~/Color';
 import {
   useArticleListStoreDispatch,
   useArticleListStoreState,
 } from '~/store/ArticleListStore';
-import {API_CALL} from '~/api';
 
 const LocationPicker = React.memo(
   ({
