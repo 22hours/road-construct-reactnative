@@ -1,25 +1,10 @@
 import React, {useState, useEffect} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-  Alert,
-} from 'react-native';
-import Geolocation from 'react-native-geolocation-service';
-import {useNavigation} from '@react-navigation/native';
+import {StyleSheet} from 'react-native';
 
 /// ORGANIMS
-import ArticleMap from '~/organism/ArticleMap';
 import MapWebView from '~/organism/MapWebView';
 
-// LAYOUT
-import SceneLayout from '~/layout/SceneLayout';
-
 // ENUM
-import GlobalEnum from '~/GlobalEnum';
 import {API_CALL} from '~/api';
 import {toastAlert} from '~/util';
 import {api_types} from '@global_types';
@@ -35,7 +20,7 @@ type position = {
 };
 type Marker_list = Array<api_types.article_marker>;
 
-const MapScene = ({route}: Props) => {
+const MapScene = () => {
   const loaderDispatch = useLoader();
   const [markerList, setMarkerList] = useState<Marker_list | null>(null);
 
@@ -66,7 +51,5 @@ const MapScene = ({route}: Props) => {
 
   return <>{markerList && <MapWebView markerList={markerList} />}</>;
 };
-
-const styles = StyleSheet.create({});
 
 export default MapScene;

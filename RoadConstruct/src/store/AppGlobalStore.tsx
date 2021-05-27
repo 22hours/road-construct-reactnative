@@ -78,7 +78,7 @@ export const AppGlobalProvider = ({children}: {children: React.ReactNode}) => {
 
   const getLocationInitData = async () => {
     loaderDispatch({type: 'SHOW_LOADER'});
-    const rest_data = await API_CALL('get', 'MAIN_HOST', 'LOCATION_LIST');
+    const rest_data = await API_CALL('get', 'GITHUB', 'LOCATION_LIST');
     loaderDispatch({type: 'HIDE_LOADER'});
 
     if (rest_data) {

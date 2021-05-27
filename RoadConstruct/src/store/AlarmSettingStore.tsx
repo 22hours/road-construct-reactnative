@@ -11,6 +11,7 @@ import {API_CALL} from '~/api';
 import {useLoader} from '~/store/AppGlobalLoadingStore';
 import {useLocationData} from '~/store/AppGlobalStore';
 import {toastAlert} from '~/util';
+import {useAuthStore} from './AuthStore';
 let axiosSource = axios.CancelToken.source();
 
 // ELEMENT TYPES
@@ -153,7 +154,7 @@ export const AlarmSettingProvider = ({children}) => {
     loaderDispatch({type: 'SHOW_LOADER'});
     setTimeout(() => {
       submitRealAction();
-    }, 2000);
+    }, 0);
   };
 
   const submitRealAction = async () => {
@@ -166,11 +167,25 @@ export const AlarmSettingProvider = ({children}) => {
       });
     });
     console.log(JSON.stringify(request_obj, null, 2));
-    setTimeout(() => {
-      loaderDispatch({type: 'HIDE_LOADER'});
-      toastAlert('설정 완료');
-      // naviagtion.goBack();
-    }, 1500);
+    const rest_data = await API_CALL(
+      'post',
+      'MAIN_HOST',
+      'USER_ALARMED_LOCATION_LIST',
+      undefined,
+      request_obj,
+      true,
+    );
+    if (rest_data) {
+      if (rest_data.result === 'SUCCESS') {
+        loaderDispatch({type: 'HIDE_LOADER'});
+        toastAlert('설정 완료');
+        // naviagtion.goBack();
+      } else {
+        const msg = rest_data.msg;
+        loaderDispatch({type: 'HIDE_LOADER'});
+        toastAlert(msg);
+      }
+    }
   };
 
   const init = async () => {
@@ -180,7 +195,8 @@ export const AlarmSettingProvider = ({children}) => {
       'MAIN_HOST',
       'USER_ALARMED_LOCATION_LIST',
       undefined,
-      {},
+      undefined,
+      true,
     );
     if (rest_data) {
       if (rest_data.result === 'SUCCESS') {

@@ -138,7 +138,7 @@ const ArticleFlatListController = React.memo(
     };
     const [state, dispatch] = useReducer(reducer, {
       nowTab: '지자체',
-      page: 1,
+      page: 0,
       data: [],
       isEnd: false,
       isInited: true,
@@ -169,7 +169,7 @@ const ArticleFlatListController = React.memo(
     };
     const fetchMore = async () => {
       if (state.isEnd) return;
-      if (state.page === 1) {
+      if (state.page === 0) {
         dispatchLoader({type: 'SHOW_LOADER'});
       }
       const res_data = await API_CALL(

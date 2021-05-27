@@ -1,5 +1,4 @@
 import React, {
-  useState,
   useEffect,
   Dispatch,
   createContext,
@@ -9,8 +8,8 @@ import React, {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
 import DeviceInfo from 'react-native-device-info';
-import {API_CALL} from '~/api';
 import {Alert} from 'react-native';
+import {API_CALL} from '~/api';
 
 // STATE TYPES
 type State = {};
@@ -51,8 +50,17 @@ export const AuthProvider = ({children}) => {
       const deviceId = DeviceInfo.getUniqueId();
       const fcmToken = await messaging().getToken();
 
-      const rest_data = await '1';
-      dispatch({type: 'SET_ID', data: rest_data});
+      const rest_data = await API_CALL('post', 'MAIN_HOST', 'AUTH', undefined, {
+        device_id: deviceId,
+        fcm_token: fcmToken,
+        fcm_flag: true,
+      });
+      if (rest_data) {
+        if (rest_data.result === 'SUCCESS') {
+          const user_id = rest_data.data;
+          dispatch({type: 'SET_ID', data: user_id});
+        }
+      }
     } else {
       Alert.alert(
         '권한 동의',
@@ -67,7 +75,7 @@ export const AuthProvider = ({children}) => {
       // ID 없음
       getAuthInfo();
     } else {
-      console.log({id});
+      console.log('id exitst : ', {id});
     }
   };
 
@@ -83,7 +91,7 @@ export const AuthProvider = ({children}) => {
   );
 };
 
-export const useStoreState = () => {
+export const useAuthStore = () => {
   const state = useContext(AuthContext);
   if (!state) throw new Error('Cannot find AuthProvider');
   return state;
