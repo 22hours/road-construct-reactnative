@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {StyleSheet, View, TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 
@@ -14,6 +14,7 @@ import {
 } from '~/store/ArticleListStore';
 import {API_CALL} from '~/api';
 import {useAsync} from '~/Hooks';
+import {toastAlert} from '~/util';
 
 type Select = meta_types.list_scene__tab_type;
 const select_list: Array<Select> = ['지자체', '언론', '내 관심'];
@@ -29,7 +30,7 @@ const TopTabMenu = () => {
   const navigation = useNavigation();
 
   const getTabCount = async () => {
-    return await API_CALL(
+    const rest_data = await API_CALL(
       'get',
       'MAIN_HOST',
       'ARTICLE COUNT',
@@ -37,18 +38,42 @@ const TopTabMenu = () => {
       pageState.filter,
       true,
     );
+    if (rest_data.result === 'SUCCESS') {
+      setTabData(rest_data.data);
+    } else {
+      toastAlert(rest_data.msg);
+    }
   };
 
-  const {value} = useAsync(getTabCount, [pageState.filter]);
+  const [tabData, setTabData] = useState<{
+    article_count: number;
+    media_count: number;
+    starred_count: number;
+  }>({
+    article_count: 0,
+    media_count: 0,
+    starred_count: 0,
+  });
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      getTabCount();
+    });
+    return unsubscribe;
+  }, [pageState]);
+
+  useEffect(() => {
+    getTabCount();
+  }, [pageState.filter]);
 
   const switchTabCount = (kor_tab_name: Select) => {
     switch (kor_tab_name) {
       case '지자체':
-        return value?.article_count | 0;
+        return tabData?.article_count | 0;
       case '언론':
-        return value?.media_count | 0;
+        return tabData?.media_count | 0;
       case '내 관심':
-        return value?.starred_count | 0;
+        return tabData?.starred_count | 0;
       default:
         throw new Error('SWITCH TAB COUNT ERROR');
     }

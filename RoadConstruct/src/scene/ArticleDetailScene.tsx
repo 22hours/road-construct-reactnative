@@ -342,7 +342,6 @@ const SECITON__RELREATED_CONTACT = React.memo(() => {
     source: string;
     contact: Array<{name: string; phone_num: string}>;
   }) => {
-    console.log(contact);
     return (
       <View>
         <Typho type={'LABEL'} text={source} />

@@ -13,7 +13,7 @@ h22_axios.interceptors.response.use(
     var status_code = response.status;
     var res: meta_types.api_response_type;
 
-    console.log('SUCCESS : ', response);
+    console.debug('SUCCESS : ', response);
     switch (status_code) {
       case 200: {
         res = {result: 'SUCCESS', data: response.data};
