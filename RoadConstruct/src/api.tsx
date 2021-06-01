@@ -41,7 +41,7 @@ h22_axios.interceptors.response.use(
     const error_msg = error.response?.data?.message;
     var res: meta_types.api_response_type;
 
-    console.log('ERROR OCCURED!', error.response);
+    // console.log('ERROR OCCURED!', error.response);
     switch (customErrorCode) {
       case 701: {
         res = {result: 'ERROR', msg: error_msg};
@@ -72,6 +72,9 @@ const domain_reducer = (domain: params['domain']) => {
     }
     case 'MAIN_HOST': {
       return 'http://3.36.37.99:8080/road-construct/';
+    }
+    case 'MAIN_DOCS': {
+      return 'http://3.36.37.99:8080';
     }
   }
 };
@@ -104,7 +107,7 @@ const endpoint_reducer = (
     }
     // GET :  LOCATION
     case 'LOCATION_LIST': {
-      return '/road-construct-reactnative/main/location.json';
+      return '/docs/location.json';
     }
     // GET :  ARTICLE COUNT
     case 'ARTICLE COUNT': {
@@ -145,7 +148,7 @@ const endpoint_reducer = (
 
 type params = {
   method: 'get' | 'post' | 'delete' | 'put';
-  domain: 'MAIN_HOST' | 'GITHUB';
+  domain: 'MAIN_HOST' | 'GITHUB' | 'MAIN_DOCS';
   url: params_url;
   url_query: any;
   data: any;
@@ -176,7 +179,7 @@ export const API_CALL = async (
   };
 
   if (isUserIDRequired) {
-    console.log(user_id);
+    // console.log(user_id);
     if (user_id) {
       axios_option.headers = {user_id: `${user_id}`};
     }

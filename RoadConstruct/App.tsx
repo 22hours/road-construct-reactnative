@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React from 'react';
 import {SafeAreaView, View} from 'react-native';
 import {AppGlobalProvider} from '~/store/AppGlobalStore';
 

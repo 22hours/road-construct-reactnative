@@ -212,7 +212,7 @@ const ArticleFlatListController = React.memo(
       <View>
         {state.data.length >= 1 && (
           <>
-            {state.nowTab === '지자체' ? (
+            {state.nowTab === '지자체' || state.nowTab === '내 관심' ? (
               <MemoizedArticleFlatList
                 data={state.data}
                 fetchMore={fetchMore}
@@ -241,10 +241,12 @@ const ArticleFlatList = () => {
   const navigation = useNavigation();
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      pageDispatch({type: 'SET_FILTER', data: pageState.filter});
+      if (pageState.nowTab === '내 관심') {
+        pageDispatch({type: 'SET_FILTER', data: pageState.filter});
+      }
     });
     return unsubscribe;
-  }, [navigation]);
+  }, [pageState]);
   return <ArticleFlatListController pageState={pageState} />;
 };
 

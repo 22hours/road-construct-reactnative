@@ -6,10 +6,10 @@ import React, {
   useContext,
 } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import messaging from '@react-native-firebase/messaging';
 import DeviceInfo from 'react-native-device-info';
 import {Alert} from 'react-native';
 import {API_CALL} from '~/api';
+import messaging from '@react-native-firebase/messaging';
 
 // STATE TYPES
 type State = {};
@@ -40,6 +40,11 @@ export const AuthProvider = ({children}) => {
   const [state, dispatch] = useReducer(reducer, {});
 
   const getAuthInfo = async () => {
+    messaging()
+      .subscribeToTopic('all')
+      .then(() => console.log('Subscribed to topic!'))
+      .catch(e => console.log(e));
+
     const authStatus = await messaging().requestPermission();
 
     const enabled =

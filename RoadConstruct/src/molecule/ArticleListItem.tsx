@@ -19,14 +19,11 @@ type ItemProps = api_types.article_list_item;
 const ArticleListItem = React.memo((props: ItemProps) => {
   const navigation = useNavigation();
 
-  console.log(props.date);
   var date = new Date(props.date);
-  console.log(date);
 
   var res_date = `${date.getFullYear()}.${
     date.getMonth() + 1
   }.${date.getDate()}`;
-  console.log(res_date);
 
   return (
     <View style={ST.container}>

@@ -68,7 +68,6 @@ export const ArticleDetailProvider = ({
   });
 
   const getDetailData = async () => {
-    console.log({article_id});
     loadDispatch({type: 'SHOW_LOADER'});
     const rest_data = await API_CALL(
       'get',

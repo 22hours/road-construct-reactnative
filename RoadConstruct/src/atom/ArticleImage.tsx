@@ -57,7 +57,7 @@ const ArticleImage = React.memo(({img}: {img: string | any}) => {
               {width: imgSize.width, height: imgSize.height, marginTop: 0},
             ]}
             source={{uri: localImg}}
-            onError={() => console.log('IMAGE ERROR!!!')}
+            onError={() => {}}
           />
         )}
       </TouchableOpacity>
