@@ -179,7 +179,6 @@ export const API_CALL = async (
   };
 
   if (isUserIDRequired) {
-    // console.log(user_id);
     if (user_id) {
       axios_option.headers = {user_id: `${user_id}`};
     }

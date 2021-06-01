@@ -164,12 +164,17 @@ const MemoizedWebview = React.memo(
     webViewRef: React.MutableRefObject<WebView<{}> | null>;
     handleOnMessage: (event: WebViewMessageEvent) => void;
   }) => {
+    const time = new Date();
     return (
       <WebView
+        style={{flex: 1}}
         ref={webViewRef}
         onMessage={handleOnMessage}
+        javaScriptEnabled={true}
+        domStorageEnabled={true}
+        startInLoadingState={true}
         source={{
-          uri: 'https://road-construction-66295.web.app',
+          uri: `https://road-construction-66295.web.app?time=${time}`,
         }}
       />
     );

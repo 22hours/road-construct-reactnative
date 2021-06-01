@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {StyleSheet, View, Dimensions} from 'react-native';
 import Pdf from 'react-native-pdf';
 
@@ -7,13 +7,10 @@ type Props = {
 };
 
 const PdfViewer = React.memo(({pdf_uri}: Props) => {
-  useEffect(() => {
-    console.log('RENDER!');
-  });
   return (
     <View style={styles.container}>
       <Pdf
-        source={{uri: pdf_uri, cache: true}}
+        source={{uri: pdf_uri, cache: false}}
         onLoadComplete={(numberOfPages, filePath) => {
           console.log(`number of pages: ${numberOfPages}`);
         }}

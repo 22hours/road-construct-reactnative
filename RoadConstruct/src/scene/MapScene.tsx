@@ -9,6 +9,7 @@ import {toastAlert} from '~/util';
 import {api_types} from '@global_types';
 import {useLoader} from '~/store/AppGlobalLoadingStore';
 import {useLocation} from '~/Hooks';
+import {Text, View} from 'react-native';
 
 type Props = {
   route: any;
@@ -58,14 +59,17 @@ const MapScene = () => {
     getArticleMarkerList();
   }, []);
 
-  if (markerList && location) {
-    console.log(location);
+  if (markerList) {
     return (
-      <>
-        {markerList && (
+      <View style={{flex: 1}}>
+        {markerList ? (
           <MapWebView markerList={markerList} location={location} />
+        ) : (
+          <View>
+            <Text>마커 데이터가 없습ㄴ디ㅏ</Text>
+          </View>
         )}
-      </>
+      </View>
     );
   } else {
     return <></>;
