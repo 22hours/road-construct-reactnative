@@ -33,19 +33,46 @@ const LocationPicker = React.memo(
     const pickerRef = useRef<RNPickerSelect | null>(null);
     const pressPickerArea = () => {
       if (pickerRef.current) {
-        // console.log(pickerRef.current.state);
         pickerRef.current.togglePicker();
       }
     };
+
+    const ps = StyleSheet.create({
+      inputIOS: {
+        fontSize: 16,
+        paddingVertical: 12,
+        paddingHorizontal: 10,
+        borderWidth: 1,
+        borderColor: 'gray',
+        borderRadius: 4,
+        color: 'black',
+        paddingRight: 30, // to ensure the text is never behind the icon
+      },
+      inputAndroid: {
+        fontSize: 16,
+        paddingHorizontal: 10,
+        paddingVertical: 8,
+        borderWidth: 0.5,
+        borderColor: 'purple',
+        borderRadius: 8,
+        color: 'black',
+        paddingRight: 30, // to ensure the text is never behind the icon
+      },
+    });
     return (
       <TouchableNativeFeedback onPress={() => pressPickerArea()}>
         <View style={ST.picker}>
           <RNPickerSelect
             ref={r => (pickerRef.current = r)}
-            useNativeAndroidPickerStyle={false}
+            // useNativeAndroidPickerStyle={false}
             placeholder={{label: '검색대상 도시를 선택하세요', value: null}}
             onValueChange={value => handleChange(value)}
-            style={{viewContainer: {padding: 100}}}
+            value={nowSelect}
+            style={{
+              inputAndroidContainer: {padding: 10},
+              chevron: {backgroundColor: 'black '},
+              viewContainer: {backgroundColor: 'red'},
+            }}
             items={
               items
                 ? items?.map(it => {
@@ -57,6 +84,22 @@ const LocationPicker = React.memo(
           </RNPickerSelect>
         </View>
       </TouchableNativeFeedback>
+      // <RNPickerSelect
+      //   ref={r => (pickerRef.current = r)}
+      //   useNativeAndroidPickerStyle={false}
+      //   placeholder={{label: '검색대상 도시를 선택하세요', value: null}}
+      //   onValueChange={value => handleChange(value)}
+      //   style={ps}
+      //   value={nowSelect}
+      //   items={
+      //     items
+      //       ? items?.map(it => {
+      //           return {label: it, value: it};
+      //         })
+      //       : []
+      //   }>
+      //   {/* <Typho type={'H5'} text={nowSelect} /> */}
+      // </RNPickerSelect>
     );
   },
 );
@@ -172,7 +215,7 @@ const ST = StyleSheet.create({
   picker: {
     backgroundColor: Color.LIST_SCENE.FILTER_BACK,
     minWidth: 150,
-    padding: 10,
+    // padding: 10,
     borderRadius: 5,
     marginRight: 10,
   },
