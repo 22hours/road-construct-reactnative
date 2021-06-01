@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   TouchableOpacity,
@@ -137,7 +137,7 @@ const SECITON__RELATED_ADDRESS = React.memo(() => {
       const toggleIsCollapse = () => setIsCollapse(!isCollapse);
 
       const LinkingToNaverMap = async () => {
-        const deeplink = `nmap://search?query=${'더 현대 서울'}&appname=com.roadconstruct`;
+        const deeplink = `nmap://search?appname=com.roadconstruct`;
 
         const isSupportedURL = await Linking.canOpenURL(deeplink);
         if (isSupportedURL) {
@@ -423,6 +423,9 @@ const SECTION__USER_ACTION = React.memo(
 
     const [localState, setLocalState] = useState<boolean>(starred);
 
+    useEffect(() => {
+      setLocalState(starred);
+    }, [starred]);
     const action_starred = async () => {
       const rest_data = await API_CALL(
         'put',
