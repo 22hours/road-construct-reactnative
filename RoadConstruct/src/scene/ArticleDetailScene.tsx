@@ -41,6 +41,7 @@ import {
   ViewShotProvider,
 } from '~/store/ViewShotStore';
 import {API_CALL} from '~/api';
+import {useLoader} from '~/store/AppGlobalLoadingStore';
 
 type DATA_Type = api_types.api_response__article_detail;
 
@@ -393,7 +394,7 @@ const SECTION__USER_ACTION = React.memo(
     const viewShot = useArticleDetailViewShot();
     const width = Dimensions.get('window').width;
     const navigation = useNavigation();
-
+    const loader = useLoader();
     const ST = StyleSheet.create({
       container: {
         backgroundColor: Color.DETAIL_SCENE.BOTTOM_TAB,
@@ -426,6 +427,7 @@ const SECTION__USER_ACTION = React.memo(
       setLocalState(starred);
     }, [starred]);
     const action_starred = async () => {
+      loader({type: 'SHOW_LOADER', text: '잠시만 기다려주세요'});
       const rest_data = await API_CALL(
         'put',
         'MAIN_HOST',
@@ -434,6 +436,7 @@ const SECTION__USER_ACTION = React.memo(
         undefined,
         true,
       );
+      loader({type: 'HIDE_LOADER'});
       if (rest_data) {
         if (rest_data.result === 'SUCCESS') {
           toastAlert(
