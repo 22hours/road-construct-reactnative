@@ -113,7 +113,7 @@ const endpoint_reducer = (
     }
     // GET :  LOCATION
     case 'LOCATION_LIST': {
-      return '/docs/l2ocation.json';
+      return '/docs/location.json';
     }
     // GET :  ARTICLE COUNT
     case 'ARTICLE COUNT': {
