@@ -24,15 +24,19 @@ const MediaListItem = (props: Props) => {
   return (
     <TouchableOpacity
       style={ST.container}
-      onPress={() =>
-        Linking.openURL(props.media_link)
-          .then(() => {})
-          .catch(() => {
-            toastAlert(
-              '해당 링크는 정상적이지 않습니다\n관리자에게 문의하세요...',
-            );
-          })
-      }>
+      onPress={() => {
+        if (props.media_link) {
+          Linking.openURL(props.media_link)
+            .then(() => {})
+            .catch(() => {
+              toastAlert(
+                '해당 링크는 정상적이지 않습니다\n관리자에게 문의하세요',
+              );
+            });
+        } else {
+          toastAlert('해당 링크는 정상적이지 않습니다\n관리자에게 문의하세요');
+        }
+      }}>
       <View style={ST.left}>
         <Typho type={'H4'} text={props.title} extraStyle={{marginBottom: 10}} />
         <View style={{flexDirection: 'row'}}>
