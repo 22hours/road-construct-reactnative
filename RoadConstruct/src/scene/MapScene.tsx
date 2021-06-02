@@ -59,7 +59,7 @@ const MapScene = () => {
     getArticleMarkerList();
   }, []);
 
-  if (markerList) {
+  if (markerList && location) {
     return (
       <View style={{flex: 1}}>
         {markerList ? (

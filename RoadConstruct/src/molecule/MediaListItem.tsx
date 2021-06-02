@@ -10,6 +10,16 @@ type Props = api_types.media_list_item;
 
 const MediaListItem = (props: Props) => {
   const time = useTime(props.create_date);
+  const RenderImage = () => {
+    let regex = /(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+    if (regex.test(props.thumbnail_uri)) {
+      return (
+        <FastImage source={{uri: props.thumbnail_uri}} style={ST.thumbnail} />
+      );
+    } else {
+      return <></>;
+    }
+  };
   return (
     <TouchableOpacity
       style={ST.container}
@@ -26,7 +36,7 @@ const MediaListItem = (props: Props) => {
         </View>
       </View>
       <View style={ST.right}>
-        <FastImage source={{uri: props.thumbnail_uri}} style={ST.thumbnail} />
+        <RenderImage />
       </View>
     </TouchableOpacity>
   );

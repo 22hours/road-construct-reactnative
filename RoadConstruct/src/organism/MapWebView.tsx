@@ -44,7 +44,7 @@ const MapWebView = ({markerList, location}: Props) => {
 
   const sendPostMessageToWeb = (action: sendPostMessageAction) => {
     var res_value: any = null;
-    var callBackAction: () => void = () => toastAlert('TODO');
+    var callBackAction: () => void = () => {};
     switch (action.type) {
       case 'LOAD_MARKERS': {
         res_value = {type: action.type, data: markerList};

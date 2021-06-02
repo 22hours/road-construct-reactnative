@@ -491,13 +491,16 @@ const ArticleDetailScene = (props: Props) => {
       <>
         <SceneLayout isScrollAble={true}>
           <ViewShotProvider>
-            <>
-              <SECITON__TOPIC_CONTENT />
-              <SECITON__RELATED_ADDRESS />
-              <SECTION__ARTICLE_STEP />
-              <SECITON__RELREATED_CONTACT />
+            <View style={ST.container}>
+              <View style={ST.section_list}>
+                <SECITON__TOPIC_CONTENT />
+                <SECITON__RELATED_ADDRESS />
+                <SECTION__ARTICLE_STEP />
+                <SECITON__RELREATED_CONTACT />
+              </View>
+
               <SECTION__USER_ACTION article_id={article_id} />
-            </>
+            </View>
           </ViewShotProvider>
         </SceneLayout>
       </>
@@ -506,6 +509,15 @@ const ArticleDetailScene = (props: Props) => {
 };
 
 const ST = StyleSheet.create({
+  container: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  section_list: {
+    flex: 1,
+  },
+
   section_wrapper: {
     // backgroundColor: 'white',
     borderRadius: 5,

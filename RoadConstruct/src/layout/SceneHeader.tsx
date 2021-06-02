@@ -21,10 +21,15 @@ type Props = {
   handleGotoAlarm?: () => any;
 };
 
-const SceneHeader = ({handleShare = () => toastAlert('TODO')}: Props) => {
+const SceneHeader = ({handleShare}: Props) => {
   const navigation = useNavigation();
   const handleGoToAlarm = () => {
     navigation.navigate(GlobalEnum.Route.ALARM_SETTING);
+  };
+  const handleShareEvent = () => {
+    if (handleShare) {
+      handleShare();
+    }
   };
   return (
     <>
@@ -55,11 +60,13 @@ const SceneHeader = ({handleShare = () => toastAlert('TODO')}: Props) => {
             onPress={() => handleGoToAlarm()}>
             <CustomIcon type={'BELL'} />
           </TouchableOpacity>
-          <TouchableOpacity
-            style={[ST.icon_buton]}
-            onPress={() => handleShare()}>
-            <CustomIcon type={'SHARE'} />
-          </TouchableOpacity>
+          {handleShare && (
+            <TouchableOpacity
+              style={[ST.icon_buton]}
+              onPress={() => handleShareEvent()}>
+              <CustomIcon type={'SHARE'} />
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     </>
