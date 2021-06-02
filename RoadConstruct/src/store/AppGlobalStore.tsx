@@ -11,6 +11,7 @@ import {useLoader} from './AppGlobalLoadingStore';
 import SplashScreen from 'react-native-splash-screen';
 import {Alert, BackHandler} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {toastAlert} from '~/util';
 
 // ELEMENT TYPES
 
@@ -78,7 +79,6 @@ export const AppGlobalProvider = ({children}: {children: React.ReactNode}) => {
 
   const getLocationInitData = async () => {
     loaderDispatch({type: 'SHOW_LOADER'});
-    const test1 = await API_CALL('get', 'MAIN_HOST', 'TEST');
     const rest_data = await API_CALL('get', 'MAIN_DOCS', 'LOCATION_LIST');
     loaderDispatch({type: 'HIDE_LOADER'});
     SplashScreen.hide();
@@ -89,14 +89,24 @@ export const AppGlobalProvider = ({children}: {children: React.ReactNode}) => {
         await AsyncStorage.setItem('LOCATION', JSON.stringify(rest_data.data));
       } else {
         const local_data = await AsyncStorage.getItem('LOCATION');
-        if (local_data) {
-          setInitData(JSON.parse(local_data));
+        toastAlert('클라이언트 데이터로 진행됩니다');
+        try {
+          if (local_data) {
+            setInitData(JSON.parse(local_data));
+          } else {
+            Alert.alert(
+              '서버 연결 오류',
+              '초기 구성 데이터를 받아오는데 실패하였습니다.\n인터넷 환경을 확인하신 뒤, 다시 시도해주시기 바랍니다.',
+              [{text: '종료하기', onPress: () => BackHandler.exitApp()}],
+            );
+          }
+        } catch {
+          Alert.alert(
+            '서버 연결 오류',
+            '초기 구성 데이터를 받아오는데 실패하였습니다.\n인터넷 환경을 확인하신 뒤, 다시 시도해주시기 바랍니다.',
+            [{text: '종료하기', onPress: () => BackHandler.exitApp()}],
+          );
         }
-        Alert.alert(
-          '서버 연결 오류',
-          '초기 구성 데이터를 받아오는데 실패하였습니다.\n인터넷 환경을 확인하신 뒤, 다시 시도해주시기 바랍니다.',
-          [{text: '종료하기', onPress: () => BackHandler.exitApp()}],
-        );
       }
     }
   };

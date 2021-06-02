@@ -71,8 +71,8 @@ const domain_reducer = (domain: params['domain']) => {
       return 'https://raw.githubusercontent.com/22hours/';
     }
     case 'MAIN_HOST': {
-      // return 'http://3.36.37.99:8080/road-construct/';
-      return 'http://192.168.0.10:8080';
+      return 'http://3.36.37.99:8080/road-construct/';
+      // return 'http://192.168.0.10:8080';
     }
     case 'MAIN_DOCS': {
       return 'http://3.36.37.99:8080';
@@ -113,7 +113,7 @@ const endpoint_reducer = (
     }
     // GET :  LOCATION
     case 'LOCATION_LIST': {
-      return '/docs/location.json';
+      return '/docs/l2ocation.json';
     }
     // GET :  ARTICLE COUNT
     case 'ARTICLE COUNT': {
