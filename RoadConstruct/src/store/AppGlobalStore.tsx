@@ -10,6 +10,7 @@ import {API_CALL} from '~/api';
 import {useLoader} from './AppGlobalLoadingStore';
 import SplashScreen from 'react-native-splash-screen';
 import {Alert, BackHandler} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // ELEMENT TYPES
 
@@ -60,7 +61,6 @@ const reducer = (state: ContextState, action: Action): ContextState => {
         origin_data: action.data,
         si_list: action.data.map(it => it.si),
       };
-      SplashScreen.hide();
       return res;
     default:
       throw new Error('Unhandled action');
@@ -78,13 +78,20 @@ export const AppGlobalProvider = ({children}: {children: React.ReactNode}) => {
 
   const getLocationInitData = async () => {
     loaderDispatch({type: 'SHOW_LOADER'});
+    const test1 = await API_CALL('get', 'MAIN_HOST', 'TEST');
     const rest_data = await API_CALL('get', 'MAIN_DOCS', 'LOCATION_LIST');
     loaderDispatch({type: 'HIDE_LOADER'});
+    SplashScreen.hide();
 
     if (rest_data) {
       if (rest_data.result === 'SUCCESS') {
         setInitData(rest_data.data);
+        await AsyncStorage.setItem('LOCATION', JSON.stringify(rest_data.data));
       } else {
+        const local_data = await AsyncStorage.getItem('LOCATION');
+        if (local_data) {
+          setInitData(JSON.parse(local_data));
+        }
         Alert.alert(
           '서버 연결 오류',
           '초기 구성 데이터를 받아오는데 실패하였습니다.\n인터넷 환경을 확인하신 뒤, 다시 시도해주시기 바랍니다.',

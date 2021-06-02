@@ -5,8 +5,8 @@ import {meta_types} from '@global_types';
 
 export const DOMAIN = 'https://3543d13b2b1d.ngrok.io';
 
-const h22_axios = axios.create({});
-
+const h22_axios = axios.create({timeout: 5000});
+h22_axios.defaults.timeout = 5000;
 h22_axios.interceptors.response.use(
   // SUCCESS INTERCEPT
   (response: any): any => {
@@ -41,7 +41,7 @@ h22_axios.interceptors.response.use(
     const error_msg = error.response?.data?.message;
     var res: meta_types.api_response_type;
 
-    // console.log('ERROR OCCURED!', error.response);
+    // console.debug('ERROR OCCURED!', error.config);
     switch (customErrorCode) {
       case 701: {
         res = {result: 'ERROR', msg: error_msg};
@@ -71,10 +71,12 @@ const domain_reducer = (domain: params['domain']) => {
       return 'https://raw.githubusercontent.com/22hours/';
     }
     case 'MAIN_HOST': {
-      return 'http://3.36.37.99:8080/road-construct/';
+      // return 'http://3.36.37.99:8080/road-construct/';
+      return 'http://192.168.0.10:8080';
     }
     case 'MAIN_DOCS': {
       return 'http://3.36.37.99:8080';
+      // return 'http://192.168.0.10:8080';
     }
   }
 };
@@ -92,13 +94,17 @@ type params_url =
   | 'ARTICLE_DETAIL_MARKER'
   | 'ARTICLE NEWS LIST'
   | 'USER_ALARMED_LOCATION_LIST'
-  | 'STAR';
+  | 'STAR'
+  | 'TEST';
 
 const endpoint_reducer = (
   url: params['url'],
   url_query: params['url_query'],
 ) => {
   switch (url) {
+    case 'TEST': {
+      return '/';
+    }
     case 'AUTH': {
       return 'user';
     }
@@ -169,13 +175,15 @@ export const API_CALL = async (
   var requestEP = endpoint_reducer(url, url_query);
 
   var request_URL = `${requestDOMAIN}${requestEP}`;
-
+  const CancelToken = axios.CancelToken;
+  let source = CancelToken.source();
   var axios_option = {
     method: method,
     url: request_URL,
     headers: {},
     params: undefined,
     data: undefined,
+    cancelToken: source.token,
   };
 
   if (isUserIDRequired) {
@@ -189,5 +197,11 @@ export const API_CALL = async (
       ? (axios_option.params = data)
       : (axios_option.data = data);
   }
-  return h22_axios(axios_option);
+
+  setTimeout(() => {
+    source.cancel();
+    console.log('요청 취소!');
+    return {result: 'ERROR'};
+  }, 5000);
+  return h22_axios.request(axios_option);
 };
