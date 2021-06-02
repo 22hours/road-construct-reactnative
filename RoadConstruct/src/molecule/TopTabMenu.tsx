@@ -13,7 +13,6 @@ import {
   useArticleListStoreState,
 } from '~/store/ArticleListStore';
 import {API_CALL} from '~/api';
-import {useAsync} from '~/Hooks';
 import {toastAlert} from '~/util';
 
 type Select = meta_types.list_scene__tab_type;
@@ -97,7 +96,7 @@ const TopTabMenu = () => {
               extraStyle={[ST.tab_item__text, textStyle]}
             />
             <Typho
-              type={'H3'}
+              type={'H4'}
               text={switchTabCount(it).toString()}
               extraStyle={[ST.tab_item__text, textStyle]}
             />

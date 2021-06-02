@@ -5,6 +5,7 @@ import FastImage from 'react-native-fast-image';
 import Color from '~/Color';
 import {useTime} from '~/Hooks';
 import Typho from '~/Typho';
+import {toastAlert} from '~/util';
 
 type Props = api_types.media_list_item;
 
@@ -23,7 +24,15 @@ const MediaListItem = (props: Props) => {
   return (
     <TouchableOpacity
       style={ST.container}
-      onPress={() => Linking.openURL(props.media_link)}>
+      onPress={() =>
+        Linking.openURL(props.media_link)
+          .then(() => {})
+          .catch(() => {
+            toastAlert(
+              '해당 링크는 정상적이지 않습니다\n관리자에게 문의하세요...',
+            );
+          })
+      }>
       <View style={ST.left}>
         <Typho type={'H4'} text={props.title} extraStyle={{marginBottom: 10}} />
         <View style={{flexDirection: 'row'}}>
