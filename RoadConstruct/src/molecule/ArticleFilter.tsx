@@ -4,6 +4,7 @@ import {
   View,
   TouchableOpacity,
   TouchableNativeFeedback,
+  Appearance,
 } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 
@@ -59,12 +60,15 @@ const LocationPicker = React.memo(
         paddingRight: 30, // to ensure the text is never behind the icon
       },
     });
+    const colorScheme = Appearance.getColorScheme();
+    const textcolor = colorScheme === 'dark' ? 'white' : 'black';
+
     return (
       <TouchableNativeFeedback onPress={() => pressPickerArea()}>
         <View style={ST.picker}>
           <RNPickerSelect
             ref={r => (pickerRef.current = r)}
-            // useNativeAndroidPickerStyle={false}
+            useNativeAndroidPickerStyle={false}
             placeholder={{label: '검색대상 도시를 선택하세요', value: null}}
             onValueChange={value => handleChange(value)}
             value={nowSelect}
@@ -76,7 +80,7 @@ const LocationPicker = React.memo(
             items={
               items
                 ? items?.map(it => {
-                    return {label: it, value: it};
+                    return {label: it, value: it, color: textcolor};
                   })
                 : []
             }>
@@ -84,22 +88,6 @@ const LocationPicker = React.memo(
           </RNPickerSelect>
         </View>
       </TouchableNativeFeedback>
-      // <RNPickerSelect
-      //   ref={r => (pickerRef.current = r)}
-      //   useNativeAndroidPickerStyle={false}
-      //   placeholder={{label: '검색대상 도시를 선택하세요', value: null}}
-      //   onValueChange={value => handleChange(value)}
-      //   style={ps}
-      //   value={nowSelect}
-      //   items={
-      //     items
-      //       ? items?.map(it => {
-      //           return {label: it, value: it};
-      //         })
-      //       : []
-      //   }>
-      //   {/* <Typho type={'H5'} text={nowSelect} /> */}
-      // </RNPickerSelect>
     );
   },
 );
