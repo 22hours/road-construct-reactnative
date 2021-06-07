@@ -42,6 +42,11 @@ const MediaListItem = (props: Props) => {
         <View style={{flexDirection: 'row'}}>
           <Typho
             type={'LABEL'}
+            text={props.site_name}
+            extraStyle={{marginRight: 10}}
+          />
+          <Typho
+            type={'LABEL'}
             text={props.author}
             extraStyle={{marginRight: 10}}
           />

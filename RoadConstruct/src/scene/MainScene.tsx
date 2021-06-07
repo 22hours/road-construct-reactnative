@@ -83,14 +83,14 @@ const MainScene = () => {
           </View>
         </ScrollView>
 
-        <View style={ST.footer}>
+        {/* <View style={ST.footer}>
           <Typho
             type={'CAPTION'}
             text={
               '도로 신설 소식의 모든 정보는 지자체, 정부기관 및 언론사에서 공개한 정보를 기반으로 제공됨을 알려 드립니다.'
             }
           />
-        </View>
+        </View> */}
       </View>
     </SceneLayout>
   );

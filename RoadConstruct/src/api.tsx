@@ -5,13 +5,14 @@ import {meta_types} from '@global_types';
 
 export const DOMAIN = 'https://3543d13b2b1d.ngrok.io';
 
-const h22_axios = axios.create({timeout: 5000});
-h22_axios.defaults.timeout = 5000;
+const h22_axios = axios.create({});
 h22_axios.interceptors.response.use(
   // SUCCESS INTERCEPT
   (response: any): any => {
     var status_code = response.status;
     var res: meta_types.api_response_type;
+
+    clearTimeout(response.config.timeoutTimer);
 
     console.debug('SUCCESS : ', response);
     switch (status_code) {
@@ -41,7 +42,9 @@ h22_axios.interceptors.response.use(
     const error_msg = error.response?.data?.message;
     var res: meta_types.api_response_type;
 
-    // console.debug('ERROR OCCURED!', error.config);
+    console.debug('ERROR OCCURED!', error.config);
+    clearTimeout(error.config.timeoutTimer);
+
     switch (customErrorCode) {
       case 701: {
         res = {result: 'ERROR', msg: error_msg};
@@ -71,11 +74,12 @@ const domain_reducer = (domain: params['domain']) => {
       return 'https://raw.githubusercontent.com/22hours/';
     }
     case 'MAIN_HOST': {
-      return 'http://3.36.37.99:8080/road-construct/';
+      return 'https://road-construct.fdsafdsa.shop/road-construct/';
+      // return 'http://3.36.37.99:8080/road-construct/';
       // return 'http://192.168.0.10:8080';
     }
     case 'MAIN_DOCS': {
-      return 'http://3.36.37.99:8080';
+      return 'https://road-construct.fdsafdsa.shop';
       // return 'http://192.168.0.10:8080';
     }
   }
@@ -177,6 +181,13 @@ export const API_CALL = async (
   var request_URL = `${requestDOMAIN}${requestEP}`;
   const CancelToken = axios.CancelToken;
   let source = CancelToken.source();
+
+  let timeoutTimer = setTimeout(() => {
+    source.cancel();
+    console.log('요청 취소!');
+    return {result: 'ERROR'};
+  }, 10000);
+
   var axios_option = {
     method: method,
     url: request_URL,
@@ -184,6 +195,7 @@ export const API_CALL = async (
     params: undefined,
     data: undefined,
     cancelToken: source.token,
+    timeoutTimer: timeoutTimer,
   };
 
   if (isUserIDRequired) {
@@ -198,10 +210,5 @@ export const API_CALL = async (
       : (axios_option.data = data);
   }
 
-  setTimeout(() => {
-    source.cancel();
-    console.log('요청 취소!');
-    return {result: 'ERROR'};
-  }, 5000);
   return h22_axios.request(axios_option);
 };

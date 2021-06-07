@@ -62,6 +62,7 @@ declare module '@global_types' {
       thumbnail_uri: string;
       create_date: string;
       media_link: string;
+      site_name: string;
     };
     type api_response__media_list = Array<media_list_item>;
 
@@ -115,6 +116,7 @@ declare module '@global_types' {
       shorten_address: string;
       latitude: number;
       longitude: number;
+      label: string;
     };
     type api_response__article_marker_list = Array<article_marker>;
 
@@ -139,6 +141,7 @@ declare module '@global_types' {
       thumbnail_uri: string;
       author: string;
       create_date: string;
+      site_name: string;
     };
     type api_response__article_news = Array<article_news_list_item>;
   }

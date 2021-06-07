@@ -47,6 +47,7 @@ const MapWebView = ({markerList, location}: Props) => {
     var callBackAction: () => void = () => {};
     switch (action.type) {
       case 'LOAD_MARKERS': {
+        console.log(markerList);
         res_value = {type: action.type, data: markerList};
         break;
       }
