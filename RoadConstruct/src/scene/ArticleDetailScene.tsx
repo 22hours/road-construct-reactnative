@@ -50,10 +50,12 @@ type DATA_Type = api_types.api_response__article_detail;
 ////////////////////////////////////////////////////
 const ArticleSection = ({
   section_title,
+  section_tooltip,
   section_bodies,
   isFinal = false,
 }: {
   section_title: string;
+  section_tooltip?: JSX.Element;
   section_bodies: Array<JSX.Element>;
   isFinal?: boolean;
 }) => {
@@ -71,6 +73,7 @@ const ArticleSection = ({
             extraStyle={ST.section_header__text}
           />
         </Text>
+        {section_tooltip || <></>}
       </View>
       {section_bodies?.map((it, idx) => {
         var extraStyle = idx === section_bodies.length - 1 && {marginBottom: 0};
@@ -110,7 +113,9 @@ const SECITON__TOPIC_CONTENT = React.memo(() => {
       section_title={'주요 내용'}
       section_bodies={
         state && [
-          <View key={1} style={{flexDirection: 'row'}}>
+          <View
+            key={1}
+            style={{flexDirection: 'row', justifyContent: 'space-between'}}>
             <Typho
               type={'H5'}
               text={state.content}
@@ -150,6 +155,7 @@ const SECITON__RELATED_ADDRESS = React.memo(() => {
 
       const ST = StyleSheet.create({
         container: {},
+
         preview_container: {
           flexDirection: 'row',
           justifyContent: 'space-between',
@@ -161,47 +167,49 @@ const SECITON__RELATED_ADDRESS = React.memo(() => {
         },
       });
       return (
-        <View style={ST.container}>
-          <View style={ST.preview_container}>
-            <View style={{flex: 1}}>
-              {address_list?.slice(0, 2)?.map((it, idx) => (
-                <View key={`ADDRESSTEXT_${idx}`} style={{marginBottom: 20}}>
-                  <AddressText {...it} />
-                </View>
-              ))}
-              {isCollapse &&
-                address_list?.slice(2)?.map((it, idx) => (
+        <>
+          <View style={ST.container}>
+            <View style={ST.preview_container}>
+              <View style={{flex: 1}}>
+                {address_list?.slice(0, 2)?.map((it, idx) => (
                   <View key={`ADDRESSTEXT_${idx}`} style={{marginBottom: 20}}>
                     <AddressText {...it} />
                   </View>
                 ))}
+                {isCollapse &&
+                  address_list?.slice(2)?.map((it, idx) => (
+                    <View key={`ADDRESSTEXT_${idx}`} style={{marginBottom: 20}}>
+                      <AddressText {...it} />
+                    </View>
+                  ))}
+              </View>
+              <View>
+                <ArticleButton
+                  onPress={() => LinkingToNaverMap()}
+                  text={'지도 보기'}
+                />
+                <View style={{marginBottom: 20}} />
+                <ArticleButton
+                  onPress={() =>
+                    Linking.openURL('https://www.eum.go.kr/web/mp/mpMapDet.jsp')
+                  }
+                  text={'도면 보기'}
+                />
+              </View>
             </View>
-            <View>
-              <ArticleButton
-                onPress={() => LinkingToNaverMap()}
-                text={'지도 보기'}
-              />
-              <View style={{marginBottom: 20}} />
-              <ArticleButton
-                onPress={() =>
-                  Linking.openURL('https://www.eum.go.kr/web/mp/mpMapDet.jsp')
-                }
-                text={'도면 보기'}
-              />
-            </View>
+            {address_list.length > 2 && (
+              <TouchableOpacity
+                onPress={() => toggleIsCollapse()}
+                style={ST.viewmore_button}>
+                <Typho
+                  type={'CAPTION'}
+                  text={isCollapse ? '닫기' : '더 보기'}
+                  extraStyle={{textAlign: 'center'}}
+                />
+              </TouchableOpacity>
+            )}
           </View>
-          {address_list.length > 2 && (
-            <TouchableOpacity
-              onPress={() => toggleIsCollapse()}
-              style={ST.viewmore_button}>
-              <Typho
-                type={'CAPTION'}
-                text={isCollapse ? '닫기' : '더 보기'}
-                extraStyle={{textAlign: 'center'}}
-              />
-            </TouchableOpacity>
-          )}
-        </View>
+        </>
       );
     },
   );
@@ -258,6 +266,17 @@ const SECITON__RELATED_ADDRESS = React.memo(() => {
   return (
     <ArticleSection
       section_title={'관련 지번'}
+      section_tooltip={
+        <>
+          <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
+            <Typho
+              type={'LABEL'}
+              text={'도면보기: 먼저 관련지번을 눌러 복사해 주세요'}
+              extraStyle={{color: Color.COMMON.PRIMARY}}
+            />
+          </View>
+        </>
+      }
       section_bodies={
         state && [
           <View key={1}>
@@ -501,7 +520,6 @@ const ArticleDetailScene = (props: Props) => {
                 <SECTION__ARTICLE_STEP />
                 <SECITON__RELREATED_CONTACT />
               </View>
-
               <SECTION__USER_ACTION article_id={article_id} />
             </View>
           </ViewShotProvider>
@@ -531,6 +549,8 @@ const ST = StyleSheet.create({
   },
   section_header_wrapper: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   section_header: {
     backgroundColor: Color.COMMON.PRIMARY,
