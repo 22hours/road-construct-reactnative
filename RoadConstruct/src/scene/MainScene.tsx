@@ -1,5 +1,11 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, ScrollView, View, TouchableOpacity} from 'react-native';
+import {
+  StyleSheet,
+  ScrollView,
+  View,
+  TouchableOpacity,
+  Text,
+} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 
 // STORE
@@ -26,7 +32,11 @@ const SiBox = ({si, isNew, onPress}) => {
         text={'NEW'}
         extraStyle={[ST.sibox_new_text, newTextStyle]}
       />
-      <Typho type={'H5'} text={si} extraStyle={ST.sibox_si_text} />
+
+      <Text numberOfLines={1} adjustsFontSizeToFit style={ST.sibox_si_text}>
+        {si}
+      </Text>
+      {/* <Typho type={'H5'} text={si} extraStyle={ST.sibox_si_text} /> */}
     </TouchableOpacity>
   );
 };
@@ -82,15 +92,6 @@ const MainScene = () => {
             })}
           </View>
         </ScrollView>
-
-        {/* <View style={ST.footer}>
-          <Typho
-            type={'CAPTION'}
-            text={
-              '도로 신설 소식의 모든 정보는 지자체, 정부기관 및 언론사에서 공개한 정보를 기반으로 제공됨을 알려 드립니다.'
-            }
-          />
-        </View> */}
       </View>
     </SceneLayout>
   );
@@ -101,6 +102,7 @@ const ST = StyleSheet.create({
     flex: 1,
     display: 'flex',
     flexDirection: 'column',
+    // paddingHorizontal: 50,
   },
   header: {
     flexDirection: 'row',
@@ -128,13 +130,19 @@ const ST = StyleSheet.create({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    position: 'relative',
   },
   sibox_new_text: {
+    position: 'absolute',
+    bottom: 40,
     fontSize: 8,
     fontFamily: 'CooperBlack',
   },
   sibox_si_text: {
     color: 'black',
+    fontFamily: 'AppleSDGothicNeoM',
+    fontSize: 15,
+    // flexShrink: 1,
   },
   footer: {
     paddingHorizontal: 10,
