@@ -20,8 +20,8 @@ export const ViewShotProvider = ({children}) => {
     try {
       const uri = await getPhotoUri();
       const options = {
-        title: 'Share Title',
-        message: 'Share Message',
+        title: '도로 신설 소식 공유',
+        message: '도로신설소식에서 공유하였습니다',
         url: uri,
         type: 'image/jpeg',
       };
@@ -45,7 +45,7 @@ export const ViewShotProvider = ({children}) => {
 
   return (
     <ViewShotContext.Provider value={onCapture}>
-      <ViewShot ref={captureRef} options={{format: 'webm'}}>
+      <ViewShot ref={captureRef} options={{format: 'png'}}>
         <View style={{flex: 1, backgroundColor: 'rgb(250,250,250)'}}>
           {children}
         </View>
