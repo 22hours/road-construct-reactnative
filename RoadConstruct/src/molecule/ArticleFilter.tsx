@@ -203,7 +203,6 @@ const ST = StyleSheet.create({
   picker: {
     backgroundColor: Color.LIST_SCENE.FILTER_BACK,
     minWidth: 150,
-    // padding: 10,
     borderRadius: 5,
     marginRight: 10,
   },
@@ -211,7 +210,7 @@ const ST = StyleSheet.create({
     padding: 10,
     paddingHorizontal: 15,
     borderRadius: 5,
-    backgroundColor: Color.LIST_SCENE.FILTER_BACK,
+    backgroundColor: Color.LIST_SCENE.TAB_ON,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
