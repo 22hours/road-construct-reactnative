@@ -182,7 +182,11 @@ const ArticleFilter = () => {
           })
         }
         style={ST.right_box}>
-        <Typho type={'H5'} text={'검색'} extraStyle={{textAlign: 'center'}} />
+        <Typho
+          type={'H5'}
+          text={'검색'}
+          extraStyle={{textAlign: 'center', fontFamily: 'AppleSDGothicNeoEB'}}
+        />
       </TouchableOpacity>
     </View>
   );
