@@ -105,7 +105,7 @@ const ArticleFilter = () => {
 
   const getGuList = nowSi => {
     var matchIdx = locationState.origin_data.findIndex(it => it.si === nowSi);
-    if (nowSi === '전체') return ['전체'];
+    if (nowSi === '전국') return ['전체'];
     if (matchIdx === -1) throw new Error('GU LIST ERROR :: IN ARTICLE FILTER');
     else {
       var res_gu_list: Array<string> = ['전체'];
@@ -165,7 +165,7 @@ const ArticleFilter = () => {
       <View style={ST.left_box}>
         <LocationPicker
           nowSelect={state.si}
-          items={['전체'].concat(locationState.si_list)}
+          items={['전국'].concat(locationState.si_list)}
           handleChange={setSi}
         />
         <LocationPicker
