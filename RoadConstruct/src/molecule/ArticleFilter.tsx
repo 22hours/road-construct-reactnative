@@ -5,8 +5,10 @@ import {
   TouchableOpacity,
   TouchableNativeFeedback,
   Appearance,
+  Text,
 } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
+import Modal from 'react-native-modal';
 
 // GLOBAL STORE
 import {useLocationData} from '~/store/AppGlobalStore';
@@ -15,82 +17,135 @@ import {useLocationData} from '~/store/AppGlobalStore';
 import Typho from '~/Typho';
 
 // ICONS
+import Icon_AntDesign from 'react-native-vector-icons/AntDesign';
 import Color from '~/Color';
 import {
   useArticleListStoreDispatch,
   useArticleListStoreState,
 } from '~/store/ArticleListStore';
+import {useToggleBoolean} from '~/Hooks';
+import {ScrollView} from 'react-native-gesture-handler';
 
-const LocationPicker = React.memo(
-  ({
-    items,
-    nowSelect,
-    handleChange,
-  }: {
-    items: any;
-    nowSelect: string;
-    handleChange: (data: string) => void;
-  }) => {
-    const pickerRef = useRef<RNPickerSelect | null>(null);
-    const pressPickerArea = () => {
-      if (pickerRef.current) {
-        pickerRef.current.togglePicker();
-      }
-    };
+const SelectModal = ({itemList, isVisible, toggleModal, handleChange}) => {
+  return (
+    <Modal isVisible={isVisible}>
+      <TouchableOpacity
+        style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}
+        onPress={() => toggleModal()}>
+        <TouchableOpacity activeOpacity={1} style={{padding: 10}}>
+          <View style={LST.modal_container}>
+            <View style={LST.modal_header}>
+              <Typho
+                type={'LABEL'}
+                text={'지역을 선택하세요'}
+                extraStyle={LST.modal_header_text}
+              />
+              <TouchableOpacity
+                style={LST.close_icon_wrapper}
+                onPress={() => toggleModal()}>
+                <Icon_AntDesign name="close" style={LST.close_icon} />
+              </TouchableOpacity>
+            </View>
 
-    const ps = StyleSheet.create({
-      inputIOS: {
-        fontSize: 16,
-        paddingVertical: 12,
-        paddingHorizontal: 10,
-        borderWidth: 1,
-        borderColor: 'gray',
-        borderRadius: 4,
-        color: 'black',
-        paddingRight: 30, // to ensure the text is never behind the icon
-      },
-      inputAndroid: {
-        fontSize: 16,
-        paddingHorizontal: 10,
-        paddingVertical: 8,
-        borderWidth: 0.5,
-        borderColor: 'purple',
-        borderRadius: 8,
-        color: 'black',
-        paddingRight: 30, // to ensure the text is never behind the icon
-      },
-    });
-    const colorScheme = Appearance.getColorScheme();
-    const textcolor = colorScheme === 'dark' ? 'white' : 'black';
+            <ScrollView style={LST.modal_item_list}>
+              {itemList.map((it, idx) => (
+                <TouchableOpacity
+                  key={`MODAL_ITEM::${idx}`}
+                  onPress={() => handleChange(it)}
+                  style={LST.modal_item}>
+                  <Typho type={'H5'} text={it} />
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        </TouchableOpacity>
+      </TouchableOpacity>
+    </Modal>
+  );
+};
 
-    return (
-      <TouchableNativeFeedback onPress={() => pressPickerArea()}>
-        <View style={ST.picker}>
-          <RNPickerSelect
-            ref={r => (pickerRef.current = r)}
-            useNativeAndroidPickerStyle={false}
-            placeholder={{label: '검색대상 도시를 선택하세요', value: null}}
-            onValueChange={value => handleChange(value)}
-            value={nowSelect}
-            style={{
-              inputAndroidContainer: {padding: 10},
-              chevron: {backgroundColor: 'black '},
-              viewContainer: {backgroundColor: 'red'},
-            }}
-            items={
-              items
-                ? items?.map(it => {
-                    return {label: it, value: it, color: textcolor};
-                  })
-                : []
-            }>
-            <Typho type={'H5'} text={nowSelect} />
-          </RNPickerSelect>
-        </View>
-      </TouchableNativeFeedback>
-    );
+const LocationSelect = ({
+  items,
+  nowSelect,
+  handleChange,
+}: {
+  items: any;
+  nowSelect: string;
+  handleChange: (data: string) => void;
+}) => {
+  const {state, toggle, setState} = useToggleBoolean();
+  const handleLocalChange = (value: string) => {
+    setState(false);
+    handleChange(value);
+  };
+  return (
+    <>
+      <TouchableOpacity style={LST.select_container} onPress={() => toggle()}>
+        <Typho type={'H5'} text={nowSelect} />
+        <Icon_AntDesign name="caretdown" style={LST.icon} />
+      </TouchableOpacity>
+      <SelectModal
+        isVisible={state}
+        toggleModal={toggle}
+        itemList={items}
+        handleChange={handleLocalChange}
+      />
+    </>
+  );
+};
+
+const LST = StyleSheet.create({
+  select_container: {
+    backgroundColor: Color.LIST_SCENE.FILTER_BACK,
+    minWidth: 120,
+    flex: 1,
+    padding: 10,
+    borderRadius: 5,
+    marginRight: 10,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
-);
+  icon: {
+    color: 'gray',
+  },
+  modal_container: {
+    minWidth: 300,
+    flex: 1,
+    backgroundColor: 'white',
+    // paddingVertical: 20,
+  },
+  modal_header: {
+    backgroundColor: 'white',
+    borderBottomColor: 'rgb(230,230,230)',
+    borderBottomWidth: 1,
+
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  modal_header_text: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    color: 'gray',
+  },
+  close_icon_wrapper: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+  close_icon: {
+    fontSize: 20,
+  },
+  modal_item_list: {
+    marginTop: 5,
+  },
+  modal_item: {
+    paddingHorizontal: 20,
+    paddingVertical: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgb(240,240,240)',
+  },
+});
 
 type State = {si: string; gu: string; selectable_gu_list: Array<string>};
 type Action =
@@ -163,12 +218,12 @@ const ArticleFilter = () => {
   return (
     <View style={ST.container}>
       <View style={ST.left_box}>
-        <LocationPicker
+        <LocationSelect
           nowSelect={state.si}
           items={['전국'].concat(locationState.si_list)}
           handleChange={setSi}
         />
-        <LocationPicker
+        <LocationSelect
           nowSelect={state.gu}
           items={state.selectable_gu_list}
           handleChange={setGu}
@@ -215,7 +270,6 @@ const ST = StyleSheet.create({
   right_box: {
     width: 60,
     padding: 10,
-    paddingHorizontal: 15,
     borderRadius: 5,
     backgroundColor: Color.LIST_SCENE.TAB_ON,
     flexDirection: 'row',

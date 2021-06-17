@@ -1,6 +1,12 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import Geolocation from 'react-native-geolocation-service';
 
+export const useToggleBoolean = (init?: boolean) => {
+  const [state, setState] = useState<boolean>(init ? true : false);
+  const toggle = () => setState(!state);
+  return {state, toggle, setState};
+};
+
 export const useAsync = <T, E = string>(
   asyncFunction: () => Promise<any>,
   deps?: Array<any>,
