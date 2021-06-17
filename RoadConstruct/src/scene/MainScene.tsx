@@ -66,14 +66,6 @@ const MainScene = () => {
   return (
     <SceneLayout>
       <View style={ST.container}>
-        <View style={ST.header}>
-          <Typho
-            type={'H4'}
-            text={'지역 선택'}
-            extraStyle={{marginRight: 10}}
-          />
-          <CustomIcon type={'CHECK'} width={17} height={17} />
-        </View>
         <ScrollView>
           <View style={ST.body}>
             {locationData?.si_list?.map(it => {
@@ -104,14 +96,9 @@ const ST = StyleSheet.create({
     flexDirection: 'column',
     // paddingHorizontal: 50,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-    marginTop: 10,
-    paddingHorizontal: 5,
-  },
+
   body: {
+    marginTop: 10,
     flex: 1,
     flexDirection: 'row',
     flexWrap: 'wrap',

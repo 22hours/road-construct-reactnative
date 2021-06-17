@@ -185,15 +185,10 @@ const SECITON__RELATED_ADDRESS = React.memo(() => {
               </View>
               <View>
                 <ArticleButton
-                  onPress={() => LinkingToNaverMap()}
-                  text={'지도 보기'}
-                />
-                <View style={{marginBottom: 20}} />
-                <ArticleButton
                   onPress={() =>
                     Linking.openURL('https://www.eum.go.kr/web/mp/mpMapDet.jsp')
                   }
-                  text={'도면 보기'}
+                  text={'토지 정보'}
                 />
               </View>
             </View>
