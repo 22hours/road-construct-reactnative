@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-
+import {PermissionsAndroid, Alert, BackHandler} from 'react-native';
 /// ORGANIMS
 import MapWebView from '~/organism/MapWebView';
 
@@ -10,6 +10,7 @@ import {api_types} from '@global_types';
 import {useLoader} from '~/store/AppGlobalLoadingStore';
 import {useLocation} from '~/Hooks';
 import {Text, View} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 
 type Props = {
   route: any;
@@ -26,13 +27,14 @@ type State = {
 };
 type Marker_list = Array<api_types.article_marker>;
 
-const MapScene = () => {
+const MapController = () => {
   const loaderDispatch = useLoader();
   const [markerList, setMarkerList] = useState<Marker_list | null>(null);
 
   const location = useLocation();
 
   const getArticleMarkerList = async () => {
+    console.log('HA!');
     loaderDispatch({
       type: 'SHOW_LOADER',
       text: '소식 데이터 불러오는 중',
@@ -74,6 +76,65 @@ const MapScene = () => {
   } else {
     return <></>;
   }
+};
+
+const PermissionProvider = ({children}: {children: JSX.Element}) => {
+  const navigation = useNavigation();
+  const [isGranted, setIsGranted] = useState<'WAIT' | 'SUCCESS' | 'FAIL'>(
+    'WAIT',
+  );
+
+  const requestFineLocation = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        setIsGranted('SUCCESS');
+      } else {
+        setIsGranted('FAIL');
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  };
+
+  useEffect(() => {
+    requestFineLocation();
+  }, []);
+
+  useEffect(() => {
+    if (isGranted === 'FAIL') {
+      Alert.alert(
+        '위치 권한 실패',
+        '지도를 사용하기 위해서는 위치권한이 필요합니다\n"지도보기" 버튼을 다시눌러 위치권한을 활성화 해 주세요',
+        [
+          {
+            text: 'OK',
+            onPress: () => navigation.goBack(),
+          },
+        ],
+      );
+    }
+  }, [isGranted]);
+
+  if (isGranted === 'WAIT') {
+    return <></>;
+  }
+  if (isGranted === 'FAIL') {
+    return <></>;
+  }
+  if (isGranted === 'SUCCESS') {
+    return <>{children}</>;
+  }
+};
+
+const MapScene = () => {
+  return (
+    <PermissionProvider>
+      <MapController />
+    </PermissionProvider>
+  );
 };
 
 export default MapScene;
