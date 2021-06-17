@@ -266,7 +266,7 @@ const SECITON__RELATED_ADDRESS = React.memo(() => {
           <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
             <Typho
               type={'LABEL'}
-              text={'도면보기: 먼저 관련지번을 눌러 복사해 주세요'}
+              text={'주소를 누르면 지도/공유/복사가 가능합니다'}
               extraStyle={{color: Color.COMMON.PRIMARY}}
             />
           </View>
