@@ -196,21 +196,24 @@ const ST = StyleSheet.create({
   container: {
     // backgroundColor: 'rgb(245,245,245)',
     borderRadius: 5,
+    display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   left_box: {
+    flexGrow: 1,
     flex: 1,
     flexDirection: 'row',
   },
   picker: {
     backgroundColor: Color.LIST_SCENE.FILTER_BACK,
-    minWidth: 150,
+    minWidth: 120,
     borderRadius: 5,
     marginRight: 10,
   },
   right_box: {
+    width: 60,
     padding: 10,
     paddingHorizontal: 15,
     borderRadius: 5,
